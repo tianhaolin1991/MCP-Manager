@@ -1,0 +1,8 @@
+Current domains: {initial_domains}
+Tools: {tools}
+Known Domains: {known_domains}
+
+Instruction:
+1. Identify if domains need refinement (explain why)
+2. Propose corrected domains with justification
+3. If cross-domain, prioritize primary function

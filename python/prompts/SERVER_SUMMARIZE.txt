@@ -1,0 +1,184 @@
+# Objective
+Summarize the toolset's capabilities with explicit product names and actions, then categorize functions into domains by following strict rules. If existing domains cannot cover the functions, generate new domains according to the Output Schema.
+
+# Instructions
+## Summary Rules
+- **Include Product Names**: Explicitly mention tool vendors/platforms (e.g., AWS, MySQL) in function descriptions.
+- **Action-Object Structure**: Use the format "Verb + Product + Target" (e.g., "Query AWS EC2 instances").
+- **Conciseness**: Combine similar functions under a unified action (e.g., "Backup databases" for MySQL/PostgreSQL).
+
+## Domain Categorization Rules
+- **Reuse Principle**: If a domain matches the tool functions, reuse the most similar existing domain.
+- **Generate Principle**: If no existing domain can be reused, generate a new domain in the format defined by the Output Schema: `{"name": "DomainName", "description": "DomainDescription"}`, with the name and description style imitating existing domains.
+
+## Cautions
+- **Product-Level Specificity**: Avoid generic terms and specify tools (e.g., "MySQL database CRUD operations" is better than "database CRUD operations").
+- **Domain Consistency**: Ensure all functions within a domain share a common technical or business context.
+
+# Domains
+{domains}
+
+# Output Schema
+{output_schema}
+
+# Examples
+----- Example 1 -----
+## Input
+maps_direction_transit_integrated:根据用户起终点经纬度坐标规划综合各类公共(火车、公交、地铁)交通方式的通勤方案，并且返回通勤方案的数据，跨城场景下必须传起点城市与终点城市
+-----
+maps_direction_walking:根据输入起点终点经纬度坐标规划100km 以内的步行通勤方案，并且返回通勤方案的数据
+-----
+maps_weather:根据城市名称或者标准adcode查询指定城市的天气
+## Output
+{{
+    "summary": "1.规划公共交通、步行通勤方案 2.查询指定城市天气",
+    "domains": [
+        {{
+            "name": "Location & Environmental Service",
+            "description": "位置与环境服务，包括地理信息查询、导航、路线规划、酒店、机票、天气数据获取等"
+        }}
+    ]
+}}
+
+----- Example 2 -----
+## Input
+mysql_creator:在MySQL中创建数据库与表结构
+-----
+mysql_querier:在MySQL中执行SELECT操作
+-----
+mysql_operator:在MySQL中执行INSERT/UPDATE/DELETE操作
+-----
+mysql_optimizer:分析MySQL查询执行计划并优化索引
+-----
+mysql_backup:对MySQL数据库进行热备份与增量恢复
+-----
+mysql_monitor:监控MySQL服务器性能指标与连接状态
+## Output
+```json
+{{
+    "summary": "1.在MySQL中创建数据库与表结构 2.执行MySQL数据增删改查操作 3.分析查询计划并优化索引 4.进行MySQL热备份与增量恢复 5.监控MySQL服务器性能与连接状态",
+    "domains": [
+        {{
+            "name": "DataBase Management",
+			"description": "数据库管理，涵盖数据库创建、查询、优化、备份及数据结构设计"
+        }}
+    ]
+}}
+```
+
+----- Example 3 -----
+## Input
+aws_ec2:创建与管理AWS EC2实例资源
+-----
+aws_s3:在AWS S3中存储与管理对象文件
+-----
+aws_lambda:部署无服务器函数到AWS Lambda
+-----
+aws_cloudwatch:监控AWS资源的性能与日志数据
+## Output
+```json
+{{
+    "summary": "1.创建管理AWS EC2实例 2.在AWS S3中存储管理对象文件 3.部署无服务器函数到AWS Lambda 4.监控AWS资源性能与日志",
+    "domains": [
+        {{
+            "name": "Cloud Service Integration",
+			"description": "云服务集成，调用与管理云平台 API(如 AWS/Azure)，支持云资源对接与 AI 服务整合"
+        }}
+    ]
+}}
+```
+
+----- Example 4 -----
+## Input
+adobe_cc_video_editor:在Adobe Premiere Pro中进行4K视频剪辑与时间线编排
+-----
+adobe_cc_effects:在Adobe After Effects中制作文字动态特效与粒子效果
+-----
+adobe_cc_audio_recorder:用Adobe Audition录制人声与环境音
+-----
+adobe_cc_audio_editor:用Adobe Audition进行音频降噪与多轨道混音
+-----
+adobe_cc_media_encoder:用Adobe Media Encoder导出H.264/ProRes格式视频
+-----
+adobe_cc_character_animator:用Adobe Character Animator制作表情捕捉动画
+## Output
+```json
+{{
+    "summary": "1.在Adobe Premiere Pro中进行4K视频剪辑 2.在Adobe After Effects中制作动态特效 3.用Adobe Audition录制处理音频 4.用Adobe Media Encoder导出专业格式视频 5.用Adobe Character Animator制作表情动画",
+    "domains": [
+        {{
+            "name": "Audio-Video Creation",
+			"description": "音视频创作，包括录制、剪辑、特效添加、配音及格式转换"
+        }}
+    ]
+}}
+```
+
+----- Example 5 -----
+## Input
+vscode_python:在Visual Studio Code中编写Python后端代码
+-----
+django_admin:用Django框架创建Web应用数据模型
+-----
+postgresql_db:在PostgreSQL中创建数据库存储应用数据
+-----
+nginx_deploy:用Nginx部署Web应用并配置负载均衡
+-----
+github_actions:通过GitHub Actions实现代码持续集成
+
+## Output
+```json
+{{
+    "summary": "1.在VS Code中编写Python后端代码 2.用Django创建Web应用模型 3.在PostgreSQL中创建应用数据库 4.用Nginx部署Web应用 5.通过GitHub Actions实现CI",
+    "domains": [
+        {{
+            "name": "Code Development Toolkit",
+			"description": "代码开发全流程工具，包括 IDE、版本控制、调试、部署及开发框架支持"
+        }},
+        {{
+            "name": "DataBase Management",
+			"description": "数据库管理，涵盖数据库创建、查询、优化、备份及数据结构设计"
+        }}
+    ]
+}}
+```
+
+----- Example 6 -----
+## Input
+tensorflow_train: 使用TensorFlow训练图像分类模型
+-----
+pytorch_inference: 在PyTorch中部署自然语言处理推理服务
+-----
+mlflow_tracking: 用MLflow跟踪机器学习实验参数与指标
+## Output
+```json
+{{
+    "summary": "1.用TensorFlow训练图像分类模型 2.在PyTorch中部署NLP推理服务 3.用MLflow跟踪机器学习实验",
+    "domains": [
+        {{
+            "name": "AI Model Training & Inference",
+            "description": "人工智能模型训练与推理，涵盖深度学习框架建模、模型部署及实验流程管理"
+        }}
+    ]
+}}
+```
+
+----- Example 7 -----
+## Input
+jenkins_build: 用Jenkins构建自动化编译任务
+-----
+gitlab_ci: 通过GitLab CI定义持续集成工作流
+-----
+argocd_deploy: 用Argo CD实现Kubernetes应用持续部署
+## Output
+```json
+{{
+    "summary": "1.用Jenkins构建自动化编译任务 2.通过GitLab CI定义CI工作流 3.用Argo CD实现K8s持续部署",
+    "domains": [
+        {{
+            "name": "DevOps Pipeline Management",
+            "description": "DevOps流水线管理，包括持续集成(CI)构建(如Jenkins/GitLab CI)、工作流定义及持续部署(CD)自动化，支持跨平台应用交付(如Kubernetes集群部署、云平台发布)等"
+        }}
+    ]
+}}
+```

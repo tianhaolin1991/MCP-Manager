@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Set
+from typing import Set, List
 
 
 @dataclass
@@ -15,7 +15,7 @@ class ZeroServer:
     url: str
     readme_file: str
     summary: str
-    tools: list[ZeroTool]
+    tools: List[ZeroTool]
 
 
 @dataclass
@@ -23,14 +23,10 @@ class ManagerTool:
     name: str
     description: int
     parameter: dict[str, str]
-    domain: str
 
 @dataclass
 class ManagerServer:
     name: str
     description: str
-    tools: list[ManagerTool]
-
-    @property
-    def domains(self) -> Set[str]:
-        return {b.domain for b in self.tools}
+    tools: List[ManagerTool]
+    domains: List[str]

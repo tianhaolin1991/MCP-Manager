@@ -44,21 +44,6 @@ def _from_dict(cls: Type[T], data: dict) -> T:
 
     return cls(**processed_data)
 
-def _from_dict2(cls: Type[T], data: dict) -> T:
-    """把字典转换为指定类的对象"""
-    field_types = {f.name: f.type for f in cls.__dataclass_fields__.values()}
-    processed_data = {}
-
-    for field_name, value in data.items():
-        if field_name in field_types:
-            # 处理嵌套的dataclass
-            if hasattr(field_types[field_name], '__dataclass_fields__'):
-                processed_data[field_name] = _from_dict2(field_types[field_name], value)
-            else:
-                processed_data[field_name] = value
-    return cls(**processed_data)
-
-
 def read_json_file(file_path: str, cls: Type[T]) -> List[T]:
     """读取JSON文件并将其转换为指定类的对象"""
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -66,7 +51,7 @@ def read_json_file(file_path: str, cls: Type[T]) -> List[T]:
         return [_from_dict(cls, item) for item in data_list]
 
 
-def _dataclass_to_json(obj: Any, indent: int = None) -> str:
+def dataclass_to_json(obj: Any, indent: int = None) -> str:
     def _serialize(obj):
         if hasattr(obj, '__dataclass_fields__'):
             return {f.name: _serialize(getattr(obj, f.name)) for f in fields(obj)}
@@ -91,7 +76,7 @@ def read_jsonl_file(file_path, cls: Type[T]) -> List[T]:
 
 def append_jsonl_file(file_path, json_obj):
     with open(file_path, 'a', encoding='utf-8') as f:
-        json_line = _dataclass_to_json(json_obj)
+        json_line = dataclass_to_json(json_obj)
         f.write(json_line + '\n')
 
 def remove_file(file_path):
