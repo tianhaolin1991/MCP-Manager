@@ -54,10 +54,10 @@ class ToolMatcher:
         except Exception as e:
             raise ValueError(f"Error loading tool data: {e}")
 
-    def match(self, mcp_server) -> ToolMatchResult:
+    def match(self, task) -> ToolMatchResult:
         # 准备匹配结果
         # server_docs = self.server_retriever.similarity_search_with_score(mcp_server.server, filter={'domain': mcp_server.domain}, k=5)
-        server_docs = self.server_retriever.similarity_search_with_score(mcp_server.server, k=20)
+        server_docs = self.server_retriever.similarity_search_with_score(task, k=20)
         # 使用ToolMatcher进行分层匹配
         # 第一阶段：匹配服务器
         server_scores = []
@@ -76,8 +76,7 @@ class ToolMatcher:
         for server_info in matched_servers:
             server_name = server_info["name"]
             server_score = server_info["score"]
-            tool_docs = self.tool_retriever.similarity_search_with_score(mcp_server.server,
-                                                                         filter={'server': server_name}, k=5)
+            tool_docs = self.tool_retriever.similarity_search_with_score(task, filter={'server': server_name}, k=5)
             for tool_doc, tool_score in tool_docs:
                 tool = from_dict(ManagerTool, json.loads(tool_doc.metadata["info"]))
                 tool_score = 1 / (1 + tool_score)

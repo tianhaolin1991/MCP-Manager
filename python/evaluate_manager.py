@@ -2,28 +2,26 @@
 # -*- coding: utf-8 -*-
 
 import os
-import json
 import time
-import datetime
 from dataclasses import dataclass
-from langchain_core.messages import SystemMessage,HumanMessage
+
+from langchain_core.messages import SystemMessage
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_openai import ChatOpenAI
 from openai import BaseModel
 from pydantic import Field
 
-from bean.bean import Domain, ZeroServer, ZeroTool, ManagerServer, ManagerTool
-from config.config import API_KEY, BASE_URL, MODEL_NAME
+from bean.bean import Domain, ManagerServer, ManagerTool
+from config.config import MODEL_NAME, API_KEY, BASE_URL
 from eval.tool_manager.matcher import ToolMatcher
 from eval.tool_manager.sampler import ToolSampler
 from eval.utils import generate_grid_search_params
 from utils.file_util import read_file, read_jsonl_file, dataclass_to_json, append_jsonl_file
 
 DOMAINS = [dataclass_to_json(domain) for domain in read_jsonl_file("./data/domain/domain.jsonl", Domain)]
-SYSTEM_PROMPT = read_file("./prompts/MANAGER_EVAL_SYSTEM.txt").format(domains=DOMAINS)
-USER_PROMPT = "I need to {tool_description} with a MCP server of {server_description}."
+
 MANAGER_SERVER_DICT = {server.name: server for server in
-                       read_jsonl_file("./data/mcp-manager/tool_mananger_servers.jsonl", ManagerServer)}
+                       read_jsonl_file("data/mcp-manager/manager_servers.jsonl", ManagerServer)}
 
 
 class MCPServer(BaseModel):
@@ -82,30 +80,18 @@ def test_llm_retrieval(
         selection_method = f"position_index_{position_index}"
 
     # 获取目标服务器和工具描述
-    user_prompt = USER_PROMPT.format(server_description = target_server.description, tool_description = target_tool.description)
+
     # 开始计时
     start_time = time.time()
-    # 调用大模型
-    try:
-        #chat_model = ChatOpenAI(model=MODEL_NAME, api_key=API_KEY, base_url=BASE_URL)
-        #response = chat_model.invoke([SystemMessage(content=SYSTEM_PROMPT), HumanMessage(content=user_prompt)])
-        success = True
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        response = f"Error: {str(e)}"
-        success = False
 
     # 结束计时
     end_time = time.time()
     elapsed_time = end_time - start_time
 
-    # 从响应中提取服务器描述和工具描述
-    #mcp_server = parser.parse(response.content)
-    mcp_server = MCPServer(domain="", server=target_server.description, tool=target_tool.description)
     # 初始化工具匹配器
     matcher = ToolMatcher()
 
-    match_result = matcher.match(mcp_server)
+    match_result = matcher.match(response.content)
     # 检查是否匹配到了目标工具
     is_correct = (
             match_result.server == target_server.name and
@@ -114,7 +100,7 @@ def test_llm_retrieval(
     # 构建最终结果
     return ToolSelectionResult(success=success, elapsed_time=elapsed_time, #response=response.content.strip(),
                                response="",
-                               extracted_server_desc=mcp_server.server, extracted_tool_desc=mcp_server.tool,
+                               extracted_server_desc=response.content, extracted_tool_desc=response.content,
                                target_server_name=target_server.name,
                                target_server_description=target_server.description,
                                target_tool_name=target_tool.name, target_tool_description=target_tool.description,

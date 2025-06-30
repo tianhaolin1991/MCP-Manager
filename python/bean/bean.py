@@ -22,6 +22,7 @@ class ManagerTool:
     name: str
     description: str
     parameter: dict[str, str]
+    task: str = ""
 
 @dataclass
 class Domain:

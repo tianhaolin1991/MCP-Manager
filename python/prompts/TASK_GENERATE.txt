@@ -1,0 +1,43 @@
+```
+# Instruction
+Your task is to generate a task based on the input tool information, ensuring that the task can be completed using the input tools.
+
+# Rules
+1. Avoid directly mentioning tool names in the task.
+2. Task generated should reflect clear actions, objects, and quantifiable details.
+3. Specify the scope of the tool when possible 
+(e.g., "Query the MySQL database for 2024 order records" is better than "Query the database for order records").
+```
+
+# Input Schema
+${{tool_schema}}
+
+# Examples
+----- Example 1 -----
+## Input
+{{"name": "query", "description": "Execute read-only MySQL queries against the connected database", "parameter": {{"sql": "(string): The SQL query to execute"}}}}
+## Output
+Query the address of 'Bob' using MySQL SQL.
+
+----- Example 2 -----
+## Input
+{{"name": "blurImage", "description": "Add a blur effect to the image using the Gaussian algorithm.", "parameter": {{"image": "(string): image encoded with base64", "blurRadius": "(integer): blur radius value (e.g., 5-20)"}}}}
+## Output
+Apply a blur effect with a 10-pixel radius to the imported image file.
+
+----- Example 3 -----
+## Input
+{{"name": "weatherQuery", "description": "AutoNavi Maps weather service: Inquire about the weather of a specific city Using", "parameter": {{"city": "(string): name of the city", "date": "date to query"}}}}
+## Output
+Check the weather of Wuhan on 2025-06-30 using AutoNavi
+
+----- Example 4 -----
+## Input
+{{"name": "kubeAlertMonitor", "description": "Real-time monitoring of K8s cluster health status, identification of abnormal conditions", "parameter": {{"clusterName": "(string): name of the K8s cluster to be monitored", "alertLevel": "(string): alert level (e.g., warning, error, critical)"}}}}
+## Output
+Check k8s cluster MM1's error level health status.
+
+Now generate a task with the tool below
+## Input
+{tool}
+## output

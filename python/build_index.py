@@ -5,7 +5,7 @@ from utils.file_util import read_jsonl_file, append_jsonl_file, dataclass_to_jso
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
-ALL_MANAGER_SERVERS = read_jsonl_file('data/mcp-manager/tool_mananger_servers.jsonl', ManagerServer)
+ALL_MANAGER_SERVERS = read_jsonl_file('data/mcp-manager/manager_servers.jsonl', ManagerServer)
 
 class CachedEmbeddings(Embeddings):
     def __init__(self):

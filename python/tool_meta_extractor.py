@@ -38,8 +38,9 @@ def get_visited(output_path, use_cache):
 def to_manager_server(zero_server: ZeroServer, domains: Set[str], chatModel: ChatOpenAI) -> ManagerServer:
     tools = "-----".join([f'{tool.name}:{tool.description}' for tool in zero_server.tools])
     parser = PydanticOutputParser(pydantic_object=ToolSetModel)
-    msg = SystemMessage(content=SUMMARIZE_PROMPT.format(domains=f'{"\n".join(domains)}', tools=tools,
-                                                        output_schema=ToolSetModel.model_json_schema()))
+    system_msg_str = SUMMARIZE_PROMPT.format(domains=f'{"\n".join(domains)}', tools=tools,
+                                                        output_schema=ToolSetModel.model_json_schema())
+    msg = SystemMessage(content=system_msg_str)
     response = chatModel.invoke([msg])
     toolSet = parser.parse(response.content)
     # TODO- 判断提取的domain是否合理？
@@ -76,5 +77,5 @@ TOOLS:  {len(tools)}""")
 
 if __name__ == '__main__':
     org_data_path = "./data/mcp-zero/mcp_tools_with_embedding.jsonl"
-    output_data_path = "data/mcp-manager/tool_mananger_servers.jsonl"
+    output_data_path = "data/mcp-manager/manager_servers.jsonl"
     main(data_path=org_data_path, output_path=output_data_path, use_cache=False)

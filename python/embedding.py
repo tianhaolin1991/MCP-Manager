@@ -10,7 +10,7 @@ def main():
         #model="dengcao/Qwen3-Embedding-4B:Q5_K_M"
         model="bge-m3:567m"
     )
-    servers = read_jsonl_file('data/mcp-manager/tool_mananger_servers.jsonl', ManagerServer)
+    servers = read_jsonl_file('data/mcp-manager/manager_servers.jsonl', ManagerServer)
     for server in servers:
         server_desc = embedding_model.embed_query(server.description)
         tool_descs = []
