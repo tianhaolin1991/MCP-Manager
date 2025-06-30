@@ -1,3 +1,5 @@
 langchain
 langchain-community
 langchain-openai
+langchain-ollama
+langchain_chroma

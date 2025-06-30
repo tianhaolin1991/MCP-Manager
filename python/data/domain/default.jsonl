@@ -1,0 +1,20 @@
+{"name": "Browser Operation", "description": "浏览器操作与自动化控制,如网页元素操控、Cookie 管理、页面截图等"}
+{"name": "Web Search", "description": "网页信息检索,通过关键词查询公开网页内容,支持多类型信息主动获取"}
+{"name": "Code Toolkit", "description": "代码工具集,版本控制(如git命令执行)、代码生成、代码执行、测试等"}
+{"name": "Terminal Execution", "description": "终端命令行执行,用于系统命令操作、脚本运行及服务器资源管理"}
+{"name": "Social Media Management", "description": "社交媒体账号运营,涵盖内容发布、粉丝互动、多平台批量管理与舆情分析"}
+{"name": "File System", "description": "文件系统管理,包括本地 / 云端文件的存储、读取、修改、权限控制及分类检索"}
+{"name": "Visual Environment & Container Manager", "description": "虚拟与容器环境管理，支持开发环境如（如Python虚拟环境、Node.js运行时）、容器化环境构建（Docker）"}
+{"name": "Image Processing", "description": "图像处理与生成,包括传统图片编辑、AI 图像生成、图表绘制与可视化"}
+{"name": "DataBase Management", "description": "数据库管理,涵盖数据库创建、查询、优化、备份及数据结构设计"}
+{"name": "Audio-Video Creation", "description": "音视频创作,包括录制、剪辑、特效添加、配音及格式转换"}
+{"name": "Document Format Conversion", "description": "文档格式转换,实现不同文档类型（如 PDF/Word/Markdown）的兼容性转换"}
+{"name": "Financial Service", "description": "金融服务,包括支付处理、理财管理、云成本分析及财务报表生成"}
+{"name": "Cloud Service Integration", "description": "云服务集成,调用与管理云平台 API（如 AWS/Azure）,支持云资源对接与 AI 服务整合"}
+{"name": "Office Productivity", "description": "办公生产力工具,涵盖文档编辑、邮件通信、日程管理及团队协作"}
+{"name": "Scientific Computing", "description": "科学计算,支持数值模拟、数学建模、数据分析及学科算法实现"}
+{"name": "Location & Environmental Service", "description": "位置与环境服务,包括地理信息查询、导航、路线规划、酒店、机票、天气数据获取等"}
+{"name": "Time & Task Management", "description": "时间与任务管理,涵盖日历日程、待办事项、项目进度跟踪及会议调度"}
+{"name": "News & Content Services", "description": "新闻与内容服务,提供资讯聚合、热点推送、主题订阅及媒体品牌内容"}
+{"name": "Healthcare Service", "description": "医疗健康服务,包括在线问诊、电子病历、健康数据记录及医疗资源预约"}
+{"name": "Web Data Acquisition", "description": "网络数据采集,包含网页爬虫、内容提取、反爬处理及代码仓库索引分析"}

@@ -1,6 +1,5 @@
 from dataclasses import dataclass
-from typing import Set, List
-
+from typing import List
 
 @dataclass
 class ZeroTool:
@@ -21,12 +20,23 @@ class ZeroServer:
 @dataclass
 class ManagerTool:
     name: str
-    description: int
+    description: str
     parameter: dict[str, str]
+
+@dataclass
+class Domain:
+    name: str
+    description: str
 
 @dataclass
 class ManagerServer:
     name: str
     description: str
     tools: List[ManagerTool]
-    domains: List[str]
+    domains: List[Domain]
+
+@dataclass
+class ManagerServerEmbeddings:
+    name:str
+    server: List[float]
+    tools: List[List[float]]

@@ -6,7 +6,7 @@ from typing import Type, TypeVar, List, Any
 T = TypeVar('T')
 
 
-def _from_dict(cls: Type[T], data: dict) -> T:
+def from_dict(cls: Type[T], data: dict) -> T:
     """将字典转换为指定类的对象，忽略未知属性"""
     field_names = {f.name for f in fields(cls)}
     filtered_data = {k: v for k, v in data.items() if k in field_names}
@@ -33,7 +33,7 @@ def _from_dict(cls: Type[T], data: dict) -> T:
             if hasattr(item_type, '__dataclass_fields__'):
                 # 列表元素为dataclass
                 processed_data[field_name] = [
-                    _from_dict(item_type, item) for item in value
+                    from_dict(item_type, item) for item in value
                 ] if value is not None else []
             else:
                 # 基本类型列表
@@ -48,7 +48,7 @@ def read_json_file(file_path: str, cls: Type[T]) -> List[T]:
     """读取JSON文件并将其转换为指定类的对象"""
     with open(file_path, 'r', encoding='utf-8') as f:
         data_list = json.load(f)
-        return [_from_dict(cls, item) for item in data_list]
+        return [from_dict(cls, item) for item in data_list]
 
 
 def dataclass_to_json(obj: Any, indent: int = None) -> str:
@@ -70,8 +70,10 @@ def read_jsonl_file(file_path, cls: Type[T]) -> List[T]:
     with open(file_path, encoding='utf-8') as json_file:
         json_list = json_file.readlines()
         for line in json_list:
+            if not line:
+                continue
             data = json.loads(line)
-            jsons.append(_from_dict(cls, data))
+            jsons.append(from_dict(cls, data))
     return jsons
 
 def append_jsonl_file(file_path, json_obj):

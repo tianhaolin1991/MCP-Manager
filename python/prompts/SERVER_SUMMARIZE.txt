@@ -9,7 +9,7 @@ Summarize the toolset's capabilities with explicit product names and actions, th
 
 ## Domain Categorization Rules
 - **Reuse Principle**: If a domain matches the tool functions, reuse the most similar existing domain.
-- **Generate Principle**: If no existing domain can be reused, generate a new domain in the format defined by the Output Schema: `{"name": "DomainName", "description": "DomainDescription"}`, with the name and description style imitating existing domains.
+- **Generate Principle**: If no existing domain can be reused, generate a new domain, with the name and description style imitating existing domains.
 
 ## Cautions
 - **Product-Level Specificity**: Avoid generic terms and specify tools (e.g., "MySQL database CRUD operations" is better than "database CRUD operations").
@@ -31,7 +31,7 @@ maps_direction_walking:根据输入起点终点经纬度坐标规划100km 以内
 maps_weather:根据城市名称或者标准adcode查询指定城市的天气
 ## Output
 {{
-    "summary": "1.规划公共交通、步行通勤方案 2.查询指定城市天气",
+    "summary": "1.通勤方案规划 2.基于城市的天气查询",
     "domains": [
         {{
             "name": "Location & Environmental Service",
@@ -56,7 +56,7 @@ mysql_monitor:监控MySQL服务器性能指标与连接状态
 ## Output
 ```json
 {{
-    "summary": "1.在MySQL中创建数据库与表结构 2.执行MySQL数据增删改查操作 3.分析查询计划并优化索引 4.进行MySQL热备份与增量恢复 5.监控MySQL服务器性能与连接状态",
+    "summary": "MySQL数据库操作,包括：增删改查、索引优化、备份与恢复、性能监控",
     "domains": [
         {{
             "name": "DataBase Management",
@@ -78,7 +78,7 @@ aws_cloudwatch:监控AWS资源的性能与日志数据
 ## Output
 ```json
 {{
-    "summary": "1.创建管理AWS EC2实例 2.在AWS S3中存储管理对象文件 3.部署无服务器函数到AWS Lambda 4.监控AWS资源性能与日志",
+    "summary": "AWS云服务使用，包括:EC2管理、S3文件管理、lambda无服务函数部署、AWS CloudWatch资源性能与日志数据管理",
     "domains": [
         {{
             "name": "Cloud Service Integration",
@@ -104,7 +104,7 @@ adobe_cc_character_animator:用Adobe Character Animator制作表情捕捉动画
 ## Output
 ```json
 {{
-    "summary": "1.在Adobe Premiere Pro中进行4K视频剪辑 2.在Adobe After Effects中制作动态特效 3.用Adobe Audition录制处理音频 4.用Adobe Media Encoder导出专业格式视频 5.用Adobe Character Animator制作表情动画",
+    "summary": "使用Adobe音频视频软件实现视频剪辑、特效制作、H.264/ProRes格式视频导出、声音录制、音频降噪、表情捕捉",
     "domains": [
         {{
             "name": "Audio-Video Creation",
@@ -116,28 +116,26 @@ adobe_cc_character_animator:用Adobe Character Animator制作表情捕捉动画
 
 ----- Example 5 -----
 ## Input
-vscode_python:在Visual Studio Code中编写Python后端代码
+remove_image_background:删除图片的背景
 -----
-django_admin:用Django框架创建Web应用数据模型
+adjust_brightness_image:调整图片亮度
 -----
-postgresql_db:在PostgreSQL中创建数据库存储应用数据
+add_watermark_image:添加图片水印
 -----
-nginx_deploy:用Nginx部署Web应用并配置负载均衡
------
-github_actions:通过GitHub Actions实现代码持续集成
+get_current_price:通过公司股票代码查询当前股票价格
 
 ## Output
 ```json
 {{
-    "summary": "1.在VS Code中编写Python后端代码 2.用Django创建Web应用模型 3.在PostgreSQL中创建应用数据库 4.用Nginx部署Web应用 5.通过GitHub Actions实现CI",
+    "summary": "1.图像处理工具,包括:背景删除、亮度调整和水印添加 2.股票价格查询",
     "domains": [
         {{
-            "name": "Code Development Toolkit",
-			"description": "代码开发全流程工具，包括 IDE、版本控制、调试、部署及开发框架支持"
+            "name": "Image Processing",
+            "description": "图像处理与生成,包括传统图片编辑、AI 图像生成、图表绘制与可视化"
         }},
         {{
-            "name": "DataBase Management",
-			"description": "数据库管理，涵盖数据库创建、查询、优化、备份及数据结构设计"
+            "name": "Financial Service",
+            "description": "金融服务,包括支付处理、理财管理、云成本分析及财务报表生成"
         }}
     ]
 }}
@@ -156,8 +154,8 @@ mlflow_tracking: 用MLflow跟踪机器学习实验参数与指标
     "summary": "1.用TensorFlow训练图像分类模型 2.在PyTorch中部署NLP推理服务 3.用MLflow跟踪机器学习实验",
     "domains": [
         {{
-            "name": "AI Model Training & Inference",
-            "description": "人工智能模型训练与推理，涵盖深度学习框架建模、模型部署及实验流程管理"
+            "name": "AI Model Lifecycle Management",
+            "description": "人工智能模型训练与推理，涵盖深度学习与传统机器学习框架建模、模型优化与部署、实验跟踪、数据预处理及全流程生命周期管理"
         }}
     ]
 }}
@@ -182,3 +180,8 @@ argocd_deploy: 用Argo CD实现Kubernetes应用持续部署
     ]
 }}
 ```
+
+Now Let's Do It!
+## Input
+{tools}
+## Output
