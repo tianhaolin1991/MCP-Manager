@@ -1,10 +1,9 @@
-import json
 import random
 from typing import List, Dict, Any, Tuple
 import copy
 import sys
 
-from bean.bean import ZeroServer, ZeroTool
+from bean.bean import ManagerServer, ManagerTool
 from utils.file_util import read_jsonl_file
 
 class ToolSampler:
@@ -12,15 +11,16 @@ class ToolSampler:
     Sample a specified number of tools from the dataset, and select the target tool
     """
     
-    def __init__(self, data_path: str):
+    def __init__(self, data_path: str, seed:int = 42):
         self.data_path = data_path
         self.servers_data = None
         self.all_tools = []  # each item is: (server_index, tool_index, tool_data)
         self.load_data()
+        random.seed(seed)
         
     def load_data(self) -> None:
         try:
-            self.servers_data = read_jsonl_file(self.data_path, ZeroServer)
+            self.servers_data = read_jsonl_file(self.data_path, ManagerServer)
             for server_idx, server in enumerate(self.servers_data):
                 for tool_idx, tool in enumerate(server.tools):
                     self.all_tools.append((server_idx, tool_idx, tool))
@@ -30,7 +30,7 @@ class ToolSampler:
             print(f"Error: {e}")
             sys.exit(1)
     
-    def sample_tools(self, n: int) -> List[ZeroServer]:
+    def sample_tools(self, n: int) -> List[ManagerServer]:
         if n <= 0:
             raise ValueError
         
@@ -54,7 +54,7 @@ class ToolSampler:
         
         return result
     
-    def select_target_tool(self, sampled_data: List[Dict[str, Any]], position_index: int = 0) -> Tuple[ZeroServer, ZeroTool]:
+    def select_target_tool(self, sampled_data: List[ManagerServer], position_index: int = 0) -> Tuple[ManagerServer, ManagerTool]:
         """
         Select a target tool by proportional location from sampled data.
         Used for the needle test.

@@ -2,3 +2,10 @@ BASE_URL = 'https://ark.cn-beijing.volces.com/api/v3'
 API_KEY = "f3c853c7-2505-4219-b9d5-73f4a945707a"
 MODEL_NAME = 'deepseek-v3-250324'
 PROJECT_PATH = "D://PYTHON//MCP-Manager//python"
+
+OLLAMA_URL="http://119.3.125.66:11434"
+EMBEDDING_MODEL="dengcao/Qwen3-Embedding-0.6B:F16"
+#EMBEDDING_MODEL="bge-m3:567m"
+
+DB_TYPE = "chroma"
+#DB_TYPE = "faiss"

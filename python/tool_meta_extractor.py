@@ -1,5 +1,3 @@
-import asyncio
-import copy
 import json
 from typing import List, Set
 
@@ -47,7 +45,7 @@ def to_manager_server(zero_server: ZeroServer, domains: Set[str], chatModel: Cha
     # msg = SystemMessage(content=CORRECT_PROMPT.format(initial_domains=f'[{",".join(toolSet.domains)}]', known_domains=f'[{",".join(toolSet.domains)}]', tools=tools))
     # response = chatModel.invoke([msg])
     # print(response.content)
-    manager_tools = [ManagerTool(name=tool.name, description=tool.description, parameter=tool.parameter) for tool in
+    manager_tools = [ManagerTool(name=tool.name, server_name=zero_server.name, description=tool.description, parameter=tool.parameter,task="") for tool in
                      zero_server.tools]
     domains.update([dataclass_to_json(domain) for domain in toolSet.domains])
     return ManagerServer(name=zero_server.name, description=toolSet.summary, tools=manager_tools,
@@ -76,6 +74,6 @@ TOOLS:  {len(tools)}""")
 
 
 if __name__ == '__main__':
-    org_data_path = "./data/mcp-zero/mcp_tools_with_embedding.jsonl"
+    org_data_path = "data/mcp-zero/mcp_tools.jsonl"
     output_data_path = "data/mcp-manager/manager_servers.jsonl"
     main(data_path=org_data_path, output_path=output_data_path, use_cache=False)

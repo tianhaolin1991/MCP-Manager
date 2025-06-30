@@ -4,7 +4,7 @@ from typing import List
 @dataclass
 class ZeroTool:
     name: str
-    description: int
+    description: str
     parameter: dict[str, str]
 
 @dataclass
@@ -20,6 +20,7 @@ class ZeroServer:
 @dataclass
 class ManagerTool:
     name: str
+    server:str
     description: str
     parameter: dict[str, str]
     task: str = ""
