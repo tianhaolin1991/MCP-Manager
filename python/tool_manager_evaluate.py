@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from langchain_core.output_parsers import PydanticOutputParser
 from openai import BaseModel
 from pydantic import Field
+from tenacity import retry, stop_after_attempt, wait_fixed
 
 from bean.bean import Domain, ManagerServer, ManagerTool
 from eval.tool_manager.matcher import ToolMatcher
@@ -29,7 +30,7 @@ class MCPServer(BaseModel):
 
 @dataclass
 class ToolSelectionResult:
-    success: bool
+    pass_at_k: int
     elapsed_time: float
     task:str
     is_correct: bool
@@ -46,13 +47,15 @@ class ToolSelectionResult:
 
 parser = PydanticOutputParser(pydantic_object=MCPServer)
 
-
+@retry(stop=stop_after_attempt(3), wait=wait_fixed(2), reraise=True)
 def test_llm_retrieval(
         target_server: ManagerServer,
         target_tool: ManagerTool,
+        pass_at_k: int,
         sample_size: int = 20,
         position_index: int = 0,
         use_random_selection: bool = False,
+        two_steps:bool = True
 ) -> ToolSelectionResult:
     """
 
@@ -86,22 +89,31 @@ def test_llm_retrieval(
     # 初始化工具匹配器
     matcher = ToolMatcher()
 
-    match_result = matcher.match(target_tool.task)
+    match_results = matcher.match(target_tool.task, pass_at_k = pass_at_k, two_steps = two_steps)
     # 检查是否匹配到了目标工具
-    is_correct = (
-            match_result.server == target_server.name and
-            match_result.tool.name == target_tool.name
-    )
-    # 构建最终结果
-    return ToolSelectionResult(success=True, elapsed_time=elapsed_time, #response=response.content.strip(),
-                               task = target_tool.task,
+    for match_result in match_results:
+        is_correct = (
+                match_result.server == target_server.name and
+                match_result.tool.name == target_tool.name
+        )
+        if is_correct:
+            # 构建最终结果
+            return ToolSelectionResult(pass_at_k=pass_at_k, elapsed_time=elapsed_time, #response=response.content.strip(),
+                                       task = target_tool.task,
+                                       target_server_name=target_server.name,
+                                       target_server_description=target_server.description,
+                                       target_tool_name=target_tool.name, target_tool_description=target_tool.description,
+                                       matched_server=match_result.server, matched_tool=match_result.tool.name,
+                                       sample_size=sample_size, position_index=position_index,
+                                       selection_method=selection_method, is_correct=is_correct)
+    return ToolSelectionResult(pass_at_k=pass_at_k, elapsed_time=elapsed_time,  # response=response.content.strip(),
+                               task=target_tool.task,
                                target_server_name=target_server.name,
                                target_server_description=target_server.description,
                                target_tool_name=target_tool.name, target_tool_description=target_tool.description,
-                               matched_server=match_result.server, matched_tool=match_result.tool.name,
+                               matched_server=match_results[0].server, matched_tool=match_results[0].tool.name,
                                sample_size=sample_size, position_index=position_index,
-                               selection_method=selection_method, is_correct=is_correct)
-
+                               selection_method=selection_method, is_correct=False)
 
 def covert_to_manager(zero_server, zero_tool):
     server = MANAGER_SERVER_DICT[zero_server.name]
@@ -114,10 +126,12 @@ def covert_to_manager(zero_server, zero_tool):
 def run_grid_search(
         data_path: str,
         output_dir: str,
+        pass_at_k: int,
         num_position_ratios: int = 20,
         num_sample_sizes: int = 50,
         request_interval: float = 5.0,
         use_cache: bool = True,
+        two_steps:bool = True
 ) -> None:
     """
     运行网格搜索测试
@@ -136,7 +150,7 @@ def run_grid_search(
     # 初始化结果列表
     all_results = []
     # 结果文件路径
-    results_file = os.path.join(output_dir, f"manager_grid_search_results.json")
+    results_file = os.path.join(output_dir, f"manager_grid_search_results_pass@{pass_at_k}_${'2steps' if two_steps else '1step'}.json")
     if use_cache:
         results = read_jsonl_file(results_file, ToolSelectionResult)
         all_results.extend(results)
@@ -168,7 +182,9 @@ def run_grid_search(
             target_tool=manager_tool,
             sample_size=sample_size,
             position_index=position_index,
-            use_random_selection=False
+            use_random_selection=False,
+            pass_at_k= pass_at_k,
+            two_steps = two_steps
         )
 
         # 添加到结果列表
@@ -200,13 +216,27 @@ def run_grid_search(
 if __name__ == "__main__":
     # 默认数据路径
     data_path = "data/mcp-manager/manager_server_with_task.jsonl"
-    output_dir = "data/eval/tool_manager"
-    # 运行网格搜索
-    run_grid_search(
-        data_path=data_path,
-        output_dir=output_dir,
-        num_position_ratios=20,  # 位置等分数量
-        num_sample_sizes=50,  # 样本大小数量
-        request_interval=3.0,  # 请求间隔2秒
-        use_cache=False
-    )
+    output_dir = "data/eval/tool_manager/task"
+    for i in range(1,6):
+        # 运行网格搜索
+        run_grid_search(
+            data_path=data_path,
+            output_dir=output_dir,
+            pass_at_k=i,
+            num_position_ratios=20,  # 位置等分数量
+            num_sample_sizes=50,  # 样本大小数量
+            request_interval=1.0,  # 请求间隔2秒
+            use_cache=False
+        )
+    for i in range(1,6):
+        # 运行网格搜索
+        run_grid_search(
+            data_path=data_path,
+            output_dir=output_dir,
+            pass_at_k=i,
+            num_position_ratios=20,  # 位置等分数量
+            num_sample_sizes=50,  # 样本大小数量
+            request_interval=1.0,  # 请求间隔2秒
+            use_cache=False,
+            two_steps=False
+        )
