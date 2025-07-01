@@ -1,0 +1,21 @@
+高频：
+1. Server Desc和Tool Desc, GROUND TRUTH匹配度从语义上来说都更好
+2. Server描述匹配不是特别好（可能是因为工具过多）
+3. 二者工具描述相似，但有分数差距
+4. TOOL DESC明显是Ground Truth的描述更贴切, 但检索出来相似度更低
+5. Task不太合适
+低频：
+1. 两阶段评分合理性（CASE5)
+
+
+高失败：
+Meilisearch
+Graphlit
+http_patch
+Talk To Figma
+Xero
+Okta
+思考：
+TASK是否合理？生成时是否不考虑参数会更好？是否符合实际情况
+没有明确工具的所属平台，如Figma/productboard/Postgresql/GITHUB？
+确实需要server的描述才能更精准.

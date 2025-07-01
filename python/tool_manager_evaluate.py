@@ -230,5 +230,5 @@ if __name__ == "__main__":
         num_sample_sizes=50,  # 样本大小数量
         request_interval=1.0,  # 请求间隔2秒
         use_cache=False,
-        two_steps=False
+        two_steps=True
     )

@@ -1,8 +1,14 @@
+# Analyze
+- SERVER_SCORE: LOWER/HIGHER/EQUAL 使用二阶段检索是否副作用
+- MATCH: Task和Ground Truth的匹配度 HIGHT/LOW
+- AI_JUDGE: AI判断哪个工具更好
+- NOTE: 备注
+
 # BAD CASE 0
 ## TASK
 Update the file "src/utils/helpers.js" in the project with ID "project-123" by adding a new utility function for formatting dates. The commit message should be "Add date formatting utility" and the changes should be pushed to the "feature/date-utils" branch.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | GitLab | Ghost |
 | TOOL | create_or_update_file | Edit User |
@@ -12,12 +18,16 @@ Update the file "src/utils/helpers.js" in the project with ID "project-123" by a
 | SCORES(SERVER/TOOL/FINAL) | 0.439/0.576/0.145 | 0.501/0.628/0.198 |
 | RANKS(SERVER/TOOL/FINAL) | 127/15/41 | 13/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server Desc和Tool Desc, GROUND TRUTH匹配度从语义上来说都更好
 
 # BAD CASE 1
 ## TASK
 Resume the execution of the DAG with the ID "daily_data_pipeline".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Airflow | Airflow |
 | TOOL | Unpause DAG | Update DAG |
@@ -27,12 +37,16 @@ Resume the execution of the DAG with the ID "daily_data_pipeline".
 | SCORES(SERVER/TOOL/FINAL) | 0.570/0.678/0.262 | 0.570/0.706/0.284 |
 | RANKS(SERVER/TOOL/FINAL) | 1/6/6 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: T_DESC明显是Ground Truth的描述更贴切
 
 # BAD CASE 2
 ## TASK
 Retrieve the last 30 days of sales data from the 'monthly-sales' endpoint, filtering by the 'region' parameter set to 'North America'.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Tinybird | Intercom |
 | TOOL | request-pipe-data | list_conversations |
@@ -42,12 +56,16 @@ Retrieve the last 30 days of sales data from the 'monthly-sales' endpoint, filte
 | SCORES(SERVER/TOOL/FINAL) | 0.446/0.584/0.152 | 0.606/0.585/0.215 |
 | RANKS(SERVER/TOOL/FINAL) | 70/19/37 | 1/16/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: LOW? 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server Desc和Tool Desc, GROUND TRUTH匹配度从语义上来说都更好
 
 # BAD CASE 3
 ## TASK
 Run a select query to retrieve the top 10 highest-selling products from the sales database for Q1 2024.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Tinybird | Apache IoTDB |
 | TOOL | run-select-query | select_query |
@@ -57,12 +75,16 @@ Run a select query to retrieve the top 10 highest-selling products from the sale
 | SCORES(SERVER/TOOL/FINAL) | 0.425/0.573/0.140 | 0.538/0.640/0.220 |
 | RANKS(SERVER/TOOL/FINAL) | 130/16/60 | 5/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好，且整体匹配度不是特别好（可能是因为工具过多）；二者工具描述相似，但分数差距略大
 
 # BAD CASE 4
 ## TASK
 Retrieve the top 5 products matching the search term "wireless headphones" from the product catalog.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Shopify | Glean |
 | TOOL | get-products | Search |
@@ -72,12 +94,16 @@ Retrieve the top 5 products matching the search term "wireless headphones" from 
 | SCORES(SERVER/TOOL/FINAL) | 0.466/0.580/0.157 | 0.526/0.588/0.182 |
 | RANKS(SERVER/TOOL/FINAL) | 25/5/6 | 2/4/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server Desc和Tool Desc, GROUND TRUTH匹配度从语义上来说都更好 
 
 # BAD CASE 5
 ## TASK
 Retrieve the product details for the item with ID "PRD-2024-0456".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Shopify | Productboard |
 | TOOL | get-product-by-id | get_product_detail |
@@ -87,12 +113,16 @@ Retrieve the product details for the item with ID "PRD-2024-0456".
 | SCORES(SERVER/TOOL/FINAL) | 0.502/0.617/0.192 | 0.552/0.684/0.258 |
 | RANKS(SERVER/TOOL/FINAL) | 2/2/8 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: 两个RANK2却拿到了整体第八，总体打分是否合理？ 这两个工具光从描述上来看相近
 
 # BAD CASE 6
 ## TASK
 List all available apps sorted by creation date, starting from the app with the slug "example-app" and limit the results to 20 per page.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Bitrise | Raygun |
 | TOOL | list_apps | list_applications |
@@ -102,12 +132,16 @@ List all available apps sorted by creation date, starting from the app with the 
 | SCORES(SERVER/TOOL/FINAL) | 0.419/0.613/0.158 | 0.512/0.658/0.222 |
 | RANKS(SERVER/TOOL/FINAL) | 236/7/40 | 31/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: GROUND TRUTH、Search Result功能类似，但也排在第七位
 
 # BAD CASE 7
 ## TASK
 Retrieve the latest insights for the top 5 trending tokens in the market.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | GOAT | CoinMarketCap |
 | TOOL | Get token insights using BirdEye API | communityTrendingToken |
@@ -117,12 +151,16 @@ Retrieve the latest insights for the top 5 trending tokens in the market.
 | SCORES(SERVER/TOOL/FINAL) | 0.595/0.618/0.228 | 0.593/0.771/0.352 |
 | RANKS(SERVER/TOOL/FINAL) | 4/34/33 | 5/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: HIGHER 
+- MATCH: NONE 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: NONE 
 
 # BAD CASE 8
 ## TASK
 Retrieve the latest market data for the top 10 cryptocurrencies by market capitalization.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | GOAT | coin_api_mcp |
 | TOOL | Get coin information using Coinmarketcap API | get-coin-quotes |
@@ -132,12 +170,16 @@ Retrieve the latest market data for the top 10 cryptocurrencies by market capita
 | SCORES(SERVER/TOOL/FINAL) | 0.557/0.681/0.258 | 0.653/0.751/0.369 |
 | RANKS(SERVER/TOOL/FINAL) | 6/14/27 | 1/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: LOW 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: Task不太合适。Retrieve不合理
 
 # BAD CASE 9
 ## TASK
 Retrieve the latest price and trading volume data for the top 5 trending tokens on the Ethereum network.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | GOAT | CoinMarketCap |
 | TOOL | Get token information using Dexscreener API | communityTrendingToken |
@@ -147,27 +189,16 @@ Retrieve the latest price and trading volume data for the top 5 trending tokens 
 | SCORES(SERVER/TOOL/FINAL) | 0.564/0.538/0.171 | 0.602/0.739/0.328 |
 | RANKS(SERVER/TOOL/FINAL) | 6/155/99 | 3/2/1 |
 ## ANALYSIS
-
-# BAD CASE 10
-## TASK
-Retrieve the detailed metrics for the index with the unique identifier "IDX-2024-001".
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Meilisearch | Meilisearch |
-| TOOL | get-index-metrics | get-index-metrics |
-| S_DESC | Meilisearch操作,包括:连接设置管理、索引创建与列表、文档检索与更新、搜索功能、索引设置管理、API密钥管理、任务管理、健康检查、版本与统计信息获取 | Meilisearch操作,包括:连接设置管理、索引创建与列表、文档检索与更新、搜索功能、索引设置管理、API密钥管理、任务管理、健康检查、版本与统计信息获取 |
-| T_DESC | Get detailed metrics for a specific index | Get detailed metrics for a specific index |
-| PARAMETERS | uid: (string) Unique identifier for the index | uid: (string) Unique identifier for the index |
-| SCORES(SERVER/TOOL/FINAL) | 0.410/0.721/0.213 | 0.410/0.721/0.213 |
-| RANKS(SERVER/TOOL/FINAL) | 150/1/1 | 150/1/1 |
-## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: NONE 
 
 # BAD CASE 11
 ## TASK
 Retrieve the first 15 documents from the index with the unique identifier "customer_reviews".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Meilisearch | Outline |
 | TOOL | get-documents | Read a Document |
@@ -177,12 +208,16 @@ Retrieve the first 15 documents from the index with the unique identifier "custo
 | SCORES(SERVER/TOOL/FINAL) | 0.462/0.647/0.193 | 0.586/0.613/0.220 |
 | RANKS(SERVER/TOOL/FINAL) | 86/2/6 | 1/8/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多） 
 
 # BAD CASE 12
 ## TASK
 Search for documents containing the keyword "machine learning" across all indices, limiting the results to 15 per index and sorting them by publication date in descending order.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Meilisearch | Outline |
 | TOOL | search | Search for Documents |
@@ -192,12 +227,16 @@ Search for documents containing the keyword "machine learning" across all indice
 | SCORES(SERVER/TOOL/FINAL) | 0.537/0.624/0.209 | 0.693/0.747/0.387 |
 | RANKS(SERVER/TOOL/FINAL) | 36/13/21 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Task语义明显要更贴近 Ground Truth，但比较复杂 
 
 # BAD CASE 13
 ## TASK
 Retrieve the details of the task with the unique identifier "TASK-12345".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Meilisearch | ClickUp |
 | TOOL | get-task | get_task |
@@ -207,12 +246,16 @@ Retrieve the details of the task with the unique identifier "TASK-12345".
 | SCORES(SERVER/TOOL/FINAL) | 0.445/0.688/0.211 | 0.476/0.720/0.247 |
 | RANKS(SERVER/TOOL/FINAL) | 174/3/6 | 83/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多） 
 
 # BAD CASE 14
 ## TASK
 Retrieve the first 20 tasks that were enqueued after 2024-05-01 and have a status of "completed", sorted in reverse chronological order.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Meilisearch | Todoist |
 | TOOL | get-tasks | todoist_get_tasks |
@@ -222,12 +265,16 @@ Retrieve the first 20 tasks that were enqueued after 2024-05-01 and have a statu
 | SCORES(SERVER/TOOL/FINAL) | 0.424/0.482/0.098 | 0.464/0.619/0.178 |
 | RANKS(SERVER/TOOL/FINAL) | 91/190/226 | 15/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多）  
 
 # BAD CASE 15
 ## TASK
 Perform a basic health check on the system to ensure all essential services are running properly.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Meilisearch | NS Travel Information |
 | TOOL | health-check | Service Updates |
@@ -237,12 +284,16 @@ Perform a basic health check on the system to ensure all essential services are 
 | SCORES(SERVER/TOOL/FINAL) | 0.468/0.659/0.203 | 0.539/0.703/0.266 |
 | RANKS(SERVER/TOOL/FINAL) | 70/4/7 | 3/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多）
 
 # BAD CASE 16
 ## TASK
 Check the comprehensive health status of the system.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Meilisearch | NS Travel Information |
 | TOOL | get-health-status | Service Updates |
@@ -252,12 +303,16 @@ Check the comprehensive health status of the system.
 | SCORES(SERVER/TOOL/FINAL) | 0.435/0.727/0.230 | 0.527/0.682/0.245 |
 | RANKS(SERVER/TOOL/FINAL) | 126/1/5 | 3/7/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多）
 
 # BAD CASE 17
 ## TASK
 Retrieve the current system-level information including CPU, memory, and disk usage.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Meilisearch | Meilisearch |
 | TOOL | get-system-info | get-system-info |
@@ -267,12 +322,16 @@ Retrieve the current system-level information including CPU, memory, and disk us
 | SCORES(SERVER/TOOL/FINAL) | 0.516/0.800/0.331 | 0.516/0.800/0.331 |
 | RANKS(SERVER/TOOL/FINAL) | 143/1/1 | 143/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多）
 
 # BAD CASE 18
 ## TASK
 Search for documents containing the keyword "machine learning" in the "research_papers" collection, focusing on the "title" and "abstract" fields, and return a maximum of 20 results sorted by publication date in descending order.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Typesense | Outline |
 | TOOL | typesense_query | Search for Documents |
@@ -282,12 +341,16 @@ Search for documents containing the keyword "machine learning" in the "research_
 | SCORES(SERVER/TOOL/FINAL) | 0.576/0.574/0.190 | 0.675/0.706/0.337 |
 | RANKS(SERVER/TOOL/FINAL) | 6/20/21 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: TASK并没有明显偏向于GROUND TRUTH,但差距不大,实际检索差距较大 
 
 # BAD CASE 19
 ## TASK
 Retrieve the document with ID "user123" from the "customers" collection.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Typesense | EduBase |
 | TOOL | typesense_get_document | edubase_get_user |
@@ -297,27 +360,16 @@ Retrieve the document with ID "user123" from the "customers" collection.
 | SCORES(SERVER/TOOL/FINAL) | 0.481/0.620/0.185 | 0.610/0.636/0.247 |
 | RANKS(SERVER/TOOL/FINAL) | 21/17/15 | 1/8/1 |
 ## ANALYSIS
-
-# BAD CASE 20
-## TASK
-Analyze the structure and contents of the "customer_data" collection.
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Typesense | Typesense |
-| TOOL | analyze_collection | analyze_collection |
-| S_DESC | 1.在Typesense集合中搜索文档 2.通过ID从集合中检索特定文档 3.获取Typesense集合的统计信息 4.分析集合结构和内容 5.获取集合的有效搜索查询建议 | 1.在Typesense集合中搜索文档 2.通过ID从集合中检索特定文档 3.获取Typesense集合的统计信息 4.分析集合结构和内容 5.获取集合的有效搜索查询建议 |
-| T_DESC | Analyze collection structure and contents | Analyze collection structure and contents |
-| PARAMETERS | collection_name: (string) The name of the collection | collection_name: (string) The name of the collection |
-| SCORES(SERVER/TOOL/FINAL) | 0.464/0.759/0.267 | 0.464/0.759/0.267 |
-| RANKS(SERVER/TOOL/FINAL) | 103/1/1 | 103/1/1 |
-## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: TOOL DESC明显是Ground Truth的描述更贴切, 但检索出来相似度更低 
 
 # BAD CASE 21
 ## TASK
 Generate an image from the provided text content using OpenAI's image generation capabilities.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | Image Generation |
 | TOOL | Publish as Image (OpenAI Image Generation) | generate_image |
@@ -327,12 +379,16 @@ Generate an image from the provided text content using OpenAI's image generation
 | SCORES(SERVER/TOOL/FINAL) | 0.410/0.766/0.241 | 0.644/0.688/0.305 |
 | RANKS(SERVER/TOOL/FINAL) | 121/1/3 | 1/3/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多） 
 
 # BAD CASE 22
 ## TASK
 Upload a PDF document to the knowledge base for future reference and retrieval.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | Basic Memory |
 | TOOL | Files | write_note |
@@ -342,12 +398,16 @@ Upload a PDF document to the knowledge base for future reference and retrieval.
 | SCORES(SERVER/TOOL/FINAL) | 0.535/0.702/0.264 | 0.614/0.726/0.324 |
 | RANKS(SERVER/TOOL/FINAL) | 12/5/8 | 2/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多） 
 
 # BAD CASE 23
 ## TASK
 Retrieve the latest 10 unread emails from the primary inbox in Google Mail.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | Gmail Headless |
 | TOOL | Google Mail | get_recent_emails |
@@ -357,12 +417,16 @@ Retrieve the latest 10 unread emails from the primary inbox in Google Mail.
 | SCORES(SERVER/TOOL/FINAL) | 0.419/0.664/0.185 | 0.612/0.716/0.314 |
 | RANKS(SERVER/TOOL/FINAL) | 111/2/12 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多）, 工具冲突
 
 # BAD CASE 24
 ## TASK
 Retrieve all pages and databases from the connected Notion workspace.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | scrapling-fetch |
 | TOOL | Notion | s-fetch-page |
@@ -372,12 +436,16 @@ Retrieve all pages and databases from the connected Notion workspace.
 | SCORES(SERVER/TOOL/FINAL) | 0.500/0.642/0.206 | 0.569/0.702/0.280 |
 | RANKS(SERVER/TOOL/FINAL) | 28/16/19 | 3/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: 二者工具描述相似，但有分数差距
 
 # BAD CASE 25
 ## TASK
 Fetch all active issues from the connected Linear workspace.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | Linear (Go) |
 | TOOL | Linear | linear_get_issue |
@@ -387,12 +455,16 @@ Fetch all active issues from the connected Linear workspace.
 | SCORES(SERVER/TOOL/FINAL) | 0.515/0.677/0.236 | 0.608/0.707/0.304 |
 | RANKS(SERVER/TOOL/FINAL) | 43/10/16 | 3/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: 二者工具描述相似，但有分数差距
 
 # BAD CASE 26
 ## TASK
 Retrieve all open issues assigned to the "Development" team from the Jira project "Web Platform" created in the last 30 days.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | Linear (Go) |
 | TOOL | Jira | linear_get_user_issues |
@@ -402,12 +474,16 @@ Retrieve all open issues assigned to the "Development" team from the Jira projec
 | SCORES(SERVER/TOOL/FINAL) | 0.437/0.573/0.143 | 0.548/0.593/0.193 |
 | RANKS(SERVER/TOOL/FINAL) | 58/16/31 | 2/6/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: 二者工具描述相似，但有分数差距 
 
 # BAD CASE 27
 ## TASK
 Upload a document from the local machine to the connected cloud storage service.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | Cloudinary |
 | TOOL | OneDrive | upload |
@@ -417,12 +493,16 @@ Upload a document from the local machine to the connected cloud storage service.
 | SCORES(SERVER/TOOL/FINAL) | 0.512/0.641/0.210 | 0.626/0.689/0.297 |
 | RANKS(SERVER/TOOL/FINAL) | 26/6/8 | 1/4/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: LOW 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Task不合适 
 
 # BAD CASE 28
 ## TASK
 Search for the latest news articles about renewable energy advancements.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Hyperbrowser | Tavily search |
 | TOOL | search_with_bing | tavily_news_search |
@@ -432,12 +512,16 @@ Search for the latest news articles about renewable energy advancements.
 | SCORES(SERVER/TOOL/FINAL) | 0.468/0.501/0.117 | 0.568/0.720/0.295 |
 | RANKS(SERVER/TOOL/FINAL) | 68/236/211 | 3/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: LOW?? 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: Task是否合适？Task更倾向于SEARCH RESULT
 
 # BAD CASE 29
 ## TASK
 Retrieve the latest product listings from the specified e-commerce API endpoint, including query parameters for category "electronics" and a limit of 20 items per page.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Rquest | Productboard |
 | TOOL | http_get | get_products |
@@ -447,12 +531,16 @@ Retrieve the latest product listings from the specified e-commerce API endpoint,
 | SCORES(SERVER/TOOL/FINAL) | 0.509/0.459/0.119 | 0.559/0.624/0.217 |
 | RANKS(SERVER/TOOL/FINAL) | 28/793/316 | 5/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: LOW 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Task是否合适？Task更倾向于SEARCH RESULT
 
 # BAD CASE 30
 ## TASK
 Update the user profile with the new email address "user@example.com" by sending a PUT request to the API endpoint "/api/users/123". Include the necessary authentication headers and ensure the request body is formatted as JSON.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Rquest | Inoyu |
 | TOOL | http_put | update_my_profile |
@@ -462,12 +550,16 @@ Update the user profile with the new email address "user@example.com" by sending
 | SCORES(SERVER/TOOL/FINAL) | 0.543/0.583/0.185 | 0.643/0.655/0.276 |
 | RANKS(SERVER/TOOL/FINAL) | 10/30/23 | 1/3/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: LOW 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Task是否合适？Task更倾向于SEARCH RESULT
 
 # BAD CASE 31
 ## TASK
 Update the user profile with the new email address "user@example.com" by sending a PATCH request to the API endpoint "/users/123". Include the necessary authentication headers and send the data in JSON format.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Rquest | Inoyu |
 | TOOL | http_patch | update_my_profile |
@@ -477,12 +569,16 @@ Update the user profile with the new email address "user@example.com" by sending
 | SCORES(SERVER/TOOL/FINAL) | 0.557/0.488/0.151 | 0.614/0.663/0.270 |
 | RANKS(SERVER/TOOL/FINAL) | 4/416/94 | 1/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: LOW 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Task是否合适？Task更倾向于SEARCH RESULT
 
 # BAD CASE 32
 ## TASK
 Store the configuration settings for the production environment in the key-value store.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | consul-mcp | Azure |
 | TOOL | Put values in KV store | Manage key-value pairs |
@@ -492,21 +588,11 @@ Store the configuration settings for the production environment in the key-value
 | SCORES(SERVER/TOOL/FINAL) | 0.451/0.638/0.183 | 0.508/0.694/0.245 |
 | RANKS(SERVER/TOOL/FINAL) | 87/4/7 | 7/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: 二者工具描述相似，但有分数差距;Server描述匹配不是特别好
 
-# BAD CASE 33
-## TASK
-Fetch the current price from the Pyth price feed with the ID "0xca80ba6dc32e08d06f1aa886011eed1d77c77be9eb761cc10d72b7d0a2fd57a6".
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Solana Agent Kit | Solana Agent Kit |
-| TOOL | getPythPrice | getPythPrice |
-| S_DESC | 1.部署和管理SPL代币 2.使用Wormhole进行跨链代币转移和包装 3.创建和管理NFT集合 4.使用DEX进行代币交换 5.资产借贷和质押 6.使用ZK压缩发送空投 7.获取Pyth价格数据 8.进行永续合约交易 9.管理Drift账户和保险库 10.Voltr策略存款和提款 11.获取Solana资产信息和价格推断 12.使用deBridge进行跨链订单创建和执行 13.获取代币价格数据和趋势信息 14.在OKX DEX上执行代币交换 | 1.部署和管理SPL代币 2.使用Wormhole进行跨链代币转移和包装 3.创建和管理NFT集合 4.使用DEX进行代币交换 5.资产借贷和质押 6.使用ZK压缩发送空投 7.获取Pyth价格数据 8.进行永续合约交易 9.管理Drift账户和保险库 10.Voltr策略存款和提款 11.获取Solana资产信息和价格推断 12.使用deBridge进行跨链订单创建和执行 13.获取代币价格数据和趋势信息 14.在OKX DEX上执行代币交换 |
-| T_DESC | Fetches the price from a Pyth price feed. | Fetches the price from a Pyth price feed. |
-| PARAMETERS | priceFeedID: (string) Pyth price feed ID | priceFeedID: (string) Pyth price feed ID |
-| SCORES(SERVER/TOOL/FINAL) | 0.405/0.840/0.285 | 0.405/0.840/0.285 |
-| RANKS(SERVER/TOOL/FINAL) | 123/1/1 | 123/1/1 |
-## ANALYSIS
 
 # BAD CASE 34
 ## TASK
@@ -521,7 +607,7 @@ Create a new vault with the following specifications:
 - Hurdle rate: 10%  
 - Permissioned: true
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Solana Agent Kit | Solana Agent Kit |
 | TOOL | createDriftVault | depositIntoDriftVault |
@@ -531,72 +617,16 @@ Create a new vault with the following specifications:
 | SCORES(SERVER/TOOL/FINAL) | 0.514/0.530/0.145 | 0.514/0.578/0.172 |
 | RANKS(SERVER/TOOL/FINAL) | 5/19/22 | 5/1/1 |
 ## ANALYSIS
-
-# BAD CASE 35
-## TASK
-Retrieve the current details of the active Drift user account.
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Solana Agent Kit | Solana Agent Kit |
-| TOOL | driftUserAccountInfo | driftUserAccountInfo |
-| S_DESC | 1.部署和管理SPL代币 2.使用Wormhole进行跨链代币转移和包装 3.创建和管理NFT集合 4.使用DEX进行代币交换 5.资产借贷和质押 6.使用ZK压缩发送空投 7.获取Pyth价格数据 8.进行永续合约交易 9.管理Drift账户和保险库 10.Voltr策略存款和提款 11.获取Solana资产信息和价格推断 12.使用deBridge进行跨链订单创建和执行 13.获取代币价格数据和趋势信息 14.在OKX DEX上执行代币交换 | 1.部署和管理SPL代币 2.使用Wormhole进行跨链代币转移和包装 3.创建和管理NFT集合 4.使用DEX进行代币交换 5.资产借贷和质押 6.使用ZK压缩发送空投 7.获取Pyth价格数据 8.进行永续合约交易 9.管理Drift账户和保险库 10.Voltr策略存款和提款 11.获取Solana资产信息和价格推断 12.使用deBridge进行跨链订单创建和执行 13.获取代币价格数据和趋势信息 14.在OKX DEX上执行代币交换 |
-| T_DESC | Gets information about the Drift user account. | Gets information about the Drift user account. |
-| PARAMETERS |  |  |
-| SCORES(SERVER/TOOL/FINAL) | 0.422/0.900/0.342 | 0.422/0.900/0.342 |
-| RANKS(SERVER/TOOL/FINAL) | 190/1/1 | 190/1/1 |
-## ANALYSIS
-
-# BAD CASE 36
-## TASK
-Scale the number of dynos up to 5 for the production environment.
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Heroku | Heroku |
-| TOOL | ps_scale | ps_scale |
-| S_DESC | Heroku平台应用管理,包括:应用列表查询、应用信息获取、应用创建与重命名、应用所有权转移、项目部署、Dyno管理(列表/扩缩容/重启)、Add-on管理(列表/创建/信息获取)、维护模式切换、应用日志查看、Pipeline管理(创建/升级/列表/信息)、团队与空间管理、PostgreSQL数据库操作(查询/信息/进程/锁/性能分析/凭证/维护/备份/升级) | Heroku平台应用管理,包括:应用列表查询、应用信息获取、应用创建与重命名、应用所有权转移、项目部署、Dyno管理(列表/扩缩容/重启)、Add-on管理(列表/创建/信息获取)、维护模式切换、应用日志查看、Pipeline管理(创建/升级/列表/信息)、团队与空间管理、PostgreSQL数据库操作(查询/信息/进程/锁/性能分析/凭证/维护/备份/升级) |
-| T_DESC | Scale the number of dynos up or down, or resize dynos. | Scale the number of dynos up or down, or resize dynos. |
-| PARAMETERS |  |  |
-| SCORES(SERVER/TOOL/FINAL) | 0.414/0.822/0.279 | 0.414/0.822/0.279 |
-| RANKS(SERVER/TOOL/FINAL) | 115/1/1 | 115/1/1 |
-## ANALYSIS
-
-# BAD CASE 37
-## TASK
-Retrieve detailed information about all available pipelines in the system.
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Heroku | Heroku |
-| TOOL | pipelines_info | pipelines_info |
-| S_DESC | Heroku平台应用管理,包括:应用列表查询、应用信息获取、应用创建与重命名、应用所有权转移、项目部署、Dyno管理(列表/扩缩容/重启)、Add-on管理(列表/创建/信息获取)、维护模式切换、应用日志查看、Pipeline管理(创建/升级/列表/信息)、团队与空间管理、PostgreSQL数据库操作(查询/信息/进程/锁/性能分析/凭证/维护/备份/升级) | Heroku平台应用管理,包括:应用列表查询、应用信息获取、应用创建与重命名、应用所有权转移、项目部署、Dyno管理(列表/扩缩容/重启)、Add-on管理(列表/创建/信息获取)、维护模式切换、应用日志查看、Pipeline管理(创建/升级/列表/信息)、团队与空间管理、PostgreSQL数据库操作(查询/信息/进程/锁/性能分析/凭证/维护/备份/升级) |
-| T_DESC | Get detailed pipeline information. | Get detailed pipeline information. |
-| PARAMETERS |  |  |
-| SCORES(SERVER/TOOL/FINAL) | 0.491/0.898/0.396 | 0.491/0.898/0.396 |
-| RANKS(SERVER/TOOL/FINAL) | 139/1/1 | 139/1/1 |
-## ANALYSIS
-
-# BAD CASE 38
-## TASK
-Query the Heroku PostgreSQL database for all active user accounts created in the last 30 days.
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Heroku | Heroku |
-| TOOL | pg_psql | pg_psql |
-| S_DESC | Heroku平台应用管理,包括:应用列表查询、应用信息获取、应用创建与重命名、应用所有权转移、项目部署、Dyno管理(列表/扩缩容/重启)、Add-on管理(列表/创建/信息获取)、维护模式切换、应用日志查看、Pipeline管理(创建/升级/列表/信息)、团队与空间管理、PostgreSQL数据库操作(查询/信息/进程/锁/性能分析/凭证/维护/备份/升级) | Heroku平台应用管理,包括:应用列表查询、应用信息获取、应用创建与重命名、应用所有权转移、项目部署、Dyno管理(列表/扩缩容/重启)、Add-on管理(列表/创建/信息获取)、维护模式切换、应用日志查看、Pipeline管理(创建/升级/列表/信息)、团队与空间管理、PostgreSQL数据库操作(查询/信息/进程/锁/性能分析/凭证/维护/备份/升级) |
-| T_DESC | Execute SQL queries against the Heroku PostgreSQL database. | Execute SQL queries against the Heroku PostgreSQL database. |
-| PARAMETERS |  |  |
-| SCORES(SERVER/TOOL/FINAL) | 0.600/0.729/0.319 | 0.600/0.729/0.319 |
-| RANKS(SERVER/TOOL/FINAL) | 1/1/1 | 1/1/1 |
-## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: TOOL DESC明显是Ground Truth的描述更贴切, 但检索出来相似度更低
 
 # BAD CASE 39
 ## TASK
 Retrieve details about the currently highlighted or selected item.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Talk To Figma | Productboard |
 | TOOL | get_selection | get_feature_detail |
@@ -606,12 +636,16 @@ Retrieve details about the currently highlighted or selected item.
 | SCORES(SERVER/TOOL/FINAL) | 0.498/0.771/0.296 | 0.586/0.814/0.388 |
 | RANKS(SERVER/TOOL/FINAL) | 170/4/9 | 21/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好 
 
 # BAD CASE 40
 ## TASK
 Retrieve detailed information for the nodes with IDs [101, 102, 103, 104].
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Talk To Figma | Memory |
 | TOOL | get_nodes_info | open_nodes |
@@ -621,12 +655,16 @@ Retrieve detailed information for the nodes with IDs [101, 102, 103, 104].
 | SCORES(SERVER/TOOL/FINAL) | 0.415/0.760/0.240 | 0.518/0.747/0.289 |
 | RANKS(SERVER/TOOL/FINAL) | 235/1/5 | 27/3/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不好 
 
 # BAD CASE 41
 ## TASK
 Batch create or update 10 annotations for a dataset with unique identifiers and labels.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Talk To Figma | Basic Memory |
 | TOOL | set_multiple_annotations | write_note |
@@ -636,42 +674,16 @@ Batch create or update 10 annotations for a dataset with unique identifiers and 
 | SCORES(SERVER/TOOL/FINAL) | 0.414/0.800/0.264 | 0.558/0.703/0.276 |
 | RANKS(SERVER/TOOL/FINAL) | 247/1/2 | 3/2/1 |
 ## ANALYSIS
-
-# BAD CASE 42
-## TASK
-Scan and intelligently chunk text nodes from a large design file for efficient processing.
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Talk To Figma | Talk To Figma |
-| TOOL | scan_text_nodes | scan_text_nodes |
-| S_DESC | Figma文档操作，包括：获取文档信息、节点操作（创建/修改/删除）、文本处理、布局设置、颜色与样式管理、组件实例操作、图像导出及通信通道管理 | Figma文档操作，包括：获取文档信息、节点操作（创建/修改/删除）、文本处理、布局设置、颜色与样式管理、组件实例操作、图像导出及通信通道管理 |
-| T_DESC | Scan text nodes with intelligent chunking for large designs | Scan text nodes with intelligent chunking for large designs |
-| PARAMETERS |  |  |
-| SCORES(SERVER/TOOL/FINAL) | 0.472/0.893/0.376 | 0.472/0.893/0.376 |
-| RANKS(SERVER/TOOL/FINAL) | 104/1/1 | 104/1/1 |
-## ANALYSIS
-
-# BAD CASE 43
-## TASK
-Create prepared queries to optimize the efficiency of service discovery operations.
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | consul-mcp | consul-mcp |
-| TOOL | Create prepared queries | Create prepared queries |
-| S_DESC | Consul服务管理,包括:服务注册与注销、健康检查管理、KV存储操作、会话管理、事件处理、查询执行、集群节点信息获取 | Consul服务管理,包括:服务注册与注销、健康检查管理、KV存储操作、会话管理、事件处理、查询执行、集群节点信息获取 |
-| T_DESC | Creates prepared queries for efficient service discovery. | Creates prepared queries for efficient service discovery. |
-| PARAMETERS |  |  |
-| SCORES(SERVER/TOOL/FINAL) | 0.512/0.908/0.422 | 0.512/0.908/0.422 |
-| RANKS(SERVER/TOOL/FINAL) | 132/1/1 | 132/1/1 |
-## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好
 
 # BAD CASE 44
 ## TASK
 List all available items in the current inventory.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Xero | Outline |
 | TOOL | list-items | List Collections |
@@ -681,12 +693,16 @@ List all available items in the current inventory.
 | SCORES(SERVER/TOOL/FINAL) | 0.509/0.725/0.268 | 0.512/0.830/0.353 |
 | RANKS(SERVER/TOOL/FINAL) | 45/16/12 | 44/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: 二者工具描述相似，但有分数差距;Task模棱两可 
 
 # BAD CASE 45
 ## TASK
 Create a new entry in the system with the following details: title "Project Kickoff", description "Initial meeting to discuss project goals and timelines", and due date "2024-07-15".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Contentful-mcp | DaVinci Resolve |
 | TOOL | create_entry | create_new_timeline |
@@ -696,12 +712,16 @@ Create a new entry in the system with the following details: title "Project Kick
 | SCORES(SERVER/TOOL/FINAL) | 0.511/0.607/0.188 | 0.476/0.683/0.222 |
 | RANKS(SERVER/TOOL/FINAL) | 19/11/9 | 56/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: HIGHER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: TOOL DESC明显是Ground Truth的描述更贴切, 但检索出来相似度更低 
 
 # BAD CASE 46
 ## TASK
 Retrieve the details of the current organization, including its name, address, and contact information.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Xero | SingleStore |
 | TOOL | list-organisation-details | organization_info |
@@ -711,12 +731,16 @@ Retrieve the details of the current organization, including its name, address, a
 | SCORES(SERVER/TOOL/FINAL) | 0.493/0.820/0.332 | 0.557/0.816/0.371 |
 | RANKS(SERVER/TOOL/FINAL) | 104/1/2 | 13/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多） 
 
 # BAD CASE 47
 ## TASK
 Generate a motivational quote about perseverance and success.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Xero | Qwen_Max |
 | TOOL | create-quote | qwen_max |
@@ -726,12 +750,16 @@ Generate a motivational quote about perseverance and success.
 | SCORES(SERVER/TOOL/FINAL) | 0.223/0.558/0.069 | 0.463/0.480/0.107 |
 | RANKS(SERVER/TOOL/FINAL) | 164/1/6 | 2/6/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多） 
 
 # BAD CASE 48
 ## TASK
 Retrieve detailed information about the group with ID 'GRP12345'.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Okta | whale-tracker-mcp |
 | TOOL | get_group | get_transaction_details |
@@ -741,12 +769,15 @@ Retrieve detailed information about the group with ID 'GRP12345'.
 | SCORES(SERVER/TOOL/FINAL) | 0.388/0.756/0.222 | 0.547/0.664/0.241 |
 | RANKS(SERVER/TOOL/FINAL) | 181/1/2 | 1/4/1 |
 ## ANALYSIS
-
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多） 
 # BAD CASE 49
 ## TASK
 Search for contacts with the name "John Smith" in the address book.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Telegram | MCP Toolbox for Databases |
 | TOOL | search_contacts | search-hotels-by-name |
@@ -756,27 +787,16 @@ Search for contacts with the name "John Smith" in the address book.
 | SCORES(SERVER/TOOL/FINAL) | 0.361/0.759/0.208 | 0.621/0.637/0.252 |
 | RANKS(SERVER/TOOL/FINAL) | 237/1/5 | 1/10/1 |
 ## ANALYSIS
-
-# BAD CASE 50
-## TASK
-Export all contacts in JSON format.
-## DETAILS
-| Item | TARGET | MATCHED |
-| ---- | ------ | ------- |
-| SERVER | Telegram | Telegram |
-| TOOL | export_contacts | export_contacts |
-| S_DESC | Telegram chat and user management, including chat operations (create/edit/delete), message handling (send/edit/delete), contact management (add/block/import), profile updates, and privacy settings | Telegram chat and user management, including chat operations (create/edit/delete), message handling (send/edit/delete), contact management (add/block/import), profile updates, and privacy settings |
-| T_DESC | Export all contacts as JSON. | Export all contacts as JSON. |
-| PARAMETERS |  |  |
-| SCORES(SERVER/TOOL/FINAL) | 0.418/0.985/0.406 | 0.418/0.985/0.406 |
-| RANKS(SERVER/TOOL/FINAL) | 75/1/1 | 75/1/1 |
-## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多）
 
 # BAD CASE 51
 ## TASK
 Generate an image using a color palette consisting of shades of blue and green.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | AWS | Image Generation |
 | TOOL | Color-Guided Image Generation | generate_image |
@@ -786,12 +806,16 @@ Generate an image using a color palette consisting of shades of blue and green.
 | SCORES(SERVER/TOOL/FINAL) | 0.287/0.784/0.176 | 0.576/0.610/0.215 |
 | RANKS(SERVER/TOOL/FINAL) | 217/1/4 | 1/6/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: Server描述匹配不是特别好（可能是因为工具过多）
 
 # BAD CASE 52
 ## TASK
 Retrieve the latest 10 unread emails from the inbox folder in Microsoft Outlook.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | Gmail Headless |
 | TOOL | Microsoft Outlook email | get_recent_emails |
@@ -801,12 +825,16 @@ Retrieve the latest 10 unread emails from the inbox folder in Microsoft Outlook.
 | SCORES(SERVER/TOOL/FINAL) | 0.416/0.670/0.187 | 0.539/0.691/0.257 |
 | RANKS(SERVER/TOOL/FINAL) | 110/3/6 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: TOOL DESC明显是Ground Truth的描述更贴切, 但检索出来相似度更低 
 
 # BAD CASE 53
 ## TASK
 Retrieve the latest 10 open issues from the GitHub repository for project "Alpha".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | Gitee |
 | TOOL | GitHub Issues | get_repo_issue_detail |
@@ -816,12 +844,16 @@ Retrieve the latest 10 open issues from the GitHub repository for project "Alpha
 | SCORES(SERVER/TOOL/FINAL) | 0.482/0.628/0.190 | 0.551/0.639/0.225 |
 | RANKS(SERVER/TOOL/FINAL) | 29/3/7 | 3/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: HIGH 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: 两者过于相似。没有考虑GitHub关键词 
 
 # BAD CASE 54
 ## TASK
 Search for the latest podcast episodes discussing advancements in artificial intelligence.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | mcp-local-rag |
 | TOOL | Web Search (including Podcast Search) | rag_search |
@@ -831,12 +863,16 @@ Search for the latest podcast episodes discussing advancements in artificial int
 | SCORES(SERVER/TOOL/FINAL) | 0.464/0.524/0.127 | 0.605/0.600/0.220 |
 | RANKS(SERVER/TOOL/FINAL) | 70/102/91 | 1/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 55
 ## TASK
 Retrieve the contents of the "src/utils" directory from the "main" branch of the "example-repo" repository owned by "github-user".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | GitHub | Gitee |
 | TOOL | get_file_contents | get_file_content |
@@ -846,12 +882,16 @@ Retrieve the contents of the "src/utils" directory from the "main" branch of the
 | SCORES(SERVER/TOOL/FINAL) | 0.573/0.549/0.180 | 0.599/0.630/0.238 |
 | RANKS(SERVER/TOOL/FINAL) | 2/56/24 | 1/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 58
 ## TASK
 Create a duplicate of the selected node with a 20-pixel horizontal offset to the right.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Talk To Figma | Talk To Figma |
 | TOOL | clone_node | clone_node |
@@ -861,12 +901,16 @@ Create a duplicate of the selected node with a 20-pixel horizontal offset to the
 | SCORES(SERVER/TOOL/FINAL) | 0.386/0.777/0.233 | 0.386/0.777/0.233 |
 | RANKS(SERVER/TOOL/FINAL) | 182/1/1 | 182/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 59
 ## TASK
 Update the status of the current issue to "In Progress" and assign it to the project manager.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Gitee | TickTick |
 | TOOL | update_issue | update_project |
@@ -876,12 +920,16 @@ Update the status of the current issue to "In Progress" and assign it to the pro
 | SCORES(SERVER/TOOL/FINAL) | 0.493/0.689/0.234 | 0.555/0.733/0.298 |
 | RANKS(SERVER/TOOL/FINAL) | 41/5/7 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 60
 ## TASK
 Retrieve the content of the latest project documentation page from the team's knowledge base.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Atlassian | EduBase |
 | TOOL | confluence_get_page | edubase_get_user |
@@ -891,12 +939,16 @@ Retrieve the content of the latest project documentation page from the team's kn
 | SCORES(SERVER/TOOL/FINAL) | 0.499/0.625/0.195 | 0.647/0.677/0.297 |
 | RANKS(SERVER/TOOL/FINAL) | 55/43/42 | 1/7/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 62
 ## TASK
 Create a cross-chain order to transfer 1000 USDC from Ethereum (chain ID: 1) to Polygon (chain ID: 137), converting it to MATIC and sending it to recipient address 0x123...abc.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Solana Agent Kit | Base Free USDC Transfer |
 | TOOL | createDebridgeOrder | tranfer-usdc |
@@ -906,12 +958,16 @@ Create a cross-chain order to transfer 1000 USDC from Ethereum (chain ID: 1) to 
 | SCORES(SERVER/TOOL/FINAL) | 0.525/0.572/0.172 | 0.610/0.595/0.221 |
 | RANKS(SERVER/TOOL/FINAL) | 3/7/8 | 1/5/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 64
 ## TASK
 Delete the variable with the key "user_session_token" from the system.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Airflow | Ghost |
 | TOOL | Delete Variable | Delete User |
@@ -921,12 +977,16 @@ Delete the variable with the key "user_session_token" from the system.
 | SCORES(SERVER/TOOL/FINAL) | 0.373/0.711/0.188 | 0.468/0.726/0.247 |
 | RANKS(SERVER/TOOL/FINAL) | 175/2/4 | 10/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 65
 ## TASK
 Retrieve the details of the pool named "Sunset Oasis".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Airflow | Airflow |
 | TOOL | Get Pool | Get Pool |
@@ -936,12 +996,16 @@ Retrieve the details of the pool named "Sunset Oasis".
 | SCORES(SERVER/TOOL/FINAL) | 0.340/0.728/0.181 | 0.340/0.728/0.181 |
 | RANKS(SERVER/TOOL/FINAL) | 243/1/1 | 243/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 66
 ## TASK
 List all available plugins in the system.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Airflow | Airflow |
 | TOOL | Get Plugins | Get Plugins |
@@ -951,12 +1015,16 @@ List all available plugins in the system.
 | SCORES(SERVER/TOOL/FINAL) | 0.442/0.879/0.341 | 0.442/0.879/0.341 |
 | RANKS(SERVER/TOOL/FINAL) | 236/1/1 | 236/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 70
 ## TASK
 Retrieve the first 20 chats from the paginated list, starting from page 1.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Telegram | Telegram |
 | TOOL | get_chats | get_chats |
@@ -966,12 +1034,16 @@ Retrieve the first 20 chats from the paginated list, starting from page 1.
 | SCORES(SERVER/TOOL/FINAL) | 0.401/0.849/0.289 | 0.401/0.849/0.289 |
 | RANKS(SERVER/TOOL/FINAL) | 143/1/1 | 143/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 71
 ## TASK
 List all users who are currently blocked from accessing the system.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Telegram | Telegram |
 | TOOL | get_blocked_users | get_blocked_users |
@@ -981,12 +1053,16 @@ List all users who are currently blocked from accessing the system.
 | SCORES(SERVER/TOOL/FINAL) | 0.429/0.883/0.335 | 0.429/0.883/0.335 |
 | RANKS(SERVER/TOOL/FINAL) | 106/1/1 | 106/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 73
 ## TASK
 Check the online status of the user with ID 12345.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Telegram | Telegram |
 | TOOL | get_user_status | get_user_status |
@@ -996,12 +1072,16 @@ Check the online status of the user with ID 12345.
 | SCORES(SERVER/TOOL/FINAL) | 0.413/0.810/0.271 | 0.413/0.810/0.271 |
 | RANKS(SERVER/TOOL/FINAL) | 186/1/1 | 186/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 74
 ## TASK
 Retrieve all prototype reactions with visual highlight animations from the connected nodes.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Talk To Figma | Talk To Figma |
 | TOOL | get_reactions | get_reactions |
@@ -1011,12 +1091,16 @@ Retrieve all prototype reactions with visual highlight animations from the conne
 | SCORES(SERVER/TOOL/FINAL) | 0.381/0.930/0.330 | 0.381/0.930/0.330 |
 | RANKS(SERVER/TOOL/FINAL) | 202/1/1 | 202/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 75
 ## TASK
 Extract the override properties from the currently selected component instance.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Talk To Figma | Talk To Figma |
 | TOOL | get_instance_overrides | get_instance_overrides |
@@ -1026,12 +1110,16 @@ Extract the override properties from the currently selected component instance.
 | SCORES(SERVER/TOOL/FINAL) | 0.413/0.955/0.377 | 0.413/0.955/0.377 |
 | RANKS(SERVER/TOOL/FINAL) | 170/1/1 | 170/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 76
 ## TASK
 Run a Python script in a temporary sandboxed environment to process and analyze a dataset, ensuring automatic cleanup after completion.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Heroku | code-sandbox-mcp |
 | TOOL | deploy_one_off_dyno | sandbox_exec |
@@ -1041,12 +1129,16 @@ Run a Python script in a temporary sandboxed environment to process and analyze 
 | SCORES(SERVER/TOOL/FINAL) | 0.451/0.686/0.212 | 0.588/0.737/0.319 |
 | RANKS(SERVER/TOOL/FINAL) | 116/3/9 | 2/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 77
 ## TASK
 Search for all PDF files containing the keyword "financial report" in their names within the specified folder IDs.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Box | Outline |
 | TOOL | box_search_tool | Search for Documents |
@@ -1056,12 +1148,16 @@ Search for all PDF files containing the keyword "financial report" in their name
 | SCORES(SERVER/TOOL/FINAL) | 0.426/0.645/0.177 | 0.606/0.726/0.320 |
 | RANKS(SERVER/TOOL/FINAL) | 126/4/22 | 3/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 78
 ## TASK
 Retrieve the details of a document generation job with the identifier "JOB12345".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Box | n8n |
 | TOOL | box_docgen_get_job_tool | workflow_get |
@@ -1071,12 +1167,16 @@ Retrieve the details of a document generation job with the identifier "JOB12345"
 | SCORES(SERVER/TOOL/FINAL) | 0.442/0.665/0.196 | 0.492/0.708/0.247 |
 | RANKS(SERVER/TOOL/FINAL) | 167/6/21 | 40/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 79
 ## TASK
 Create a new file named "PlayerSettings.json" in the Unity project's Assets folder with the content `{"playerName": "Hero", "health": 100, "level": 1}`.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Unity Integration (Advanced) | Unity3d Game Engine |
 | TOOL | write_file | add_asset_to_scene |
@@ -1086,12 +1186,16 @@ Create a new file named "PlayerSettings.json" in the Unity project's Assets fold
 | SCORES(SERVER/TOOL/FINAL) | 0.530/0.491/0.138 | 0.610/0.599/0.223 |
 | RANKS(SERVER/TOOL/FINAL) | 3/127/28 | 1/4/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 81
 ## TASK
 Aggregate the sales data for the last quarter to calculate total revenue and average order value.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | MongoDB Lens | Financial Datasets |
 | TOOL | aggregate-data | get_current_stock_price |
@@ -1101,12 +1205,16 @@ Aggregate the sales data for the last quarter to calculate total revenue and ave
 | SCORES(SERVER/TOOL/FINAL) | 0.400/0.464/0.086 | 0.501/0.633/0.201 |
 | RANKS(SERVER/TOOL/FINAL) | 139/578/620 | 6/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 82
 ## TASK
 Extract all unique customer email addresses from the provided dataset.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | MongoDB Lens | Shopify |
 | TOOL | distinct-values | get-customers |
@@ -1116,12 +1224,16 @@ Extract all unique customer email addresses from the provided dataset.
 | SCORES(SERVER/TOOL/FINAL) | 0.363/0.694/0.175 | 0.525/0.619/0.201 |
 | RANKS(SERVER/TOOL/FINAL) | 194/1/6 | 2/8/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 83
 ## TASK
 Retrieve the details of the list with the ID "L12345" and optionally include the name if available.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ClickUp | whale-tracker-mcp |
 | TOOL | get_list | get_transaction_details |
@@ -1131,12 +1243,16 @@ Retrieve the details of the list with the ID "L12345" and optionally include the
 | SCORES(SERVER/TOOL/FINAL) | 0.448/0.685/0.210 | 0.605/0.683/0.282 |
 | RANKS(SERVER/TOOL/FINAL) | 186/5/26 | 2/6/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 84
 ## TASK
 Create a new page titled "Project Timeline" with the content "Q2 2024 deliverables" in the specified workspace and document, setting the content format to plain text.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ClickUp | DaVinci Resolve |
 | TOOL | create_document_pages | create_new_timeline |
@@ -1146,12 +1262,16 @@ Create a new page titled "Project Timeline" with the content "Q2 2024 deliverabl
 | SCORES(SERVER/TOOL/FINAL) | 0.466/0.594/0.164 | 0.502/0.682/0.233 |
 | RANKS(SERVER/TOOL/FINAL) | 64/8/14 | 21/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 86
 ## TASK
 Approve the pending change request in the system.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ServiceNow | ServiceNow |
 | TOOL | approve_change | approve_change |
@@ -1161,12 +1281,16 @@ Approve the pending change request in the system.
 | SCORES(SERVER/TOOL/FINAL) | 0.450/0.823/0.305 | 0.450/0.823/0.305 |
 | RANKS(SERVER/TOOL/FINAL) | 128/1/1 | 128/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 87
 ## TASK
 List all available knowledge bases with their respective details.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ServiceNow | Basic Memory |
 | TOOL | list_knowledge_bases | search_notes |
@@ -1176,12 +1300,16 @@ List all available knowledge bases with their respective details.
 | SCORES(SERVER/TOOL/FINAL) | 0.443/0.776/0.267 | 0.605/0.760/0.350 |
 | RANKS(SERVER/TOOL/FINAL) | 199/1/4 | 1/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 88
 ## TASK
 Create a new issue titled "Implement user authentication" in the development team with a priority level of 2 (high) and an initial status of "In Progress". Include a description outlining the required authentication flow and security measures.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Linear | AWS |
 | TOOL | linear_create_issue | Security-First Development Workflow |
@@ -1191,12 +1319,16 @@ Create a new issue titled "Implement user authentication" in the development tea
 | SCORES(SERVER/TOOL/FINAL) | 0.581/0.552/0.187 | 0.501/0.672/0.226 |
 | RANKS(SERVER/TOOL/FINAL) | 1/52/13 | 53/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: HIGHER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 90
 ## TASK
 Retrieve all messages and shared files from the Microsoft Teams workspace for the past 7 days.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Graphlit | SingleStore |
 | TOOL | Microsoft Teams | workspace_groups_info |
@@ -1206,12 +1338,16 @@ Retrieve all messages and shared files from the Microsoft Teams workspace for th
 | SCORES(SERVER/TOOL/FINAL) | 0.441/0.688/0.209 | 0.559/0.674/0.254 |
 | RANKS(SERVER/TOOL/FINAL) | 81/1/6 | 2/3/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 91
 ## TASK
 Create a new form field for a catalog item to capture customer preferences.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ServiceNow | ServiceNow |
 | TOOL | create_catalog_item_variable | create_catalog_item_variable |
@@ -1221,12 +1357,16 @@ Create a new form field for a catalog item to capture customer preferences.
 | SCORES(SERVER/TOOL/FINAL) | 0.379/0.842/0.269 | 0.379/0.842/0.269 |
 | RANKS(SERVER/TOOL/FINAL) | 258/1/1 | 258/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 92
 ## TASK
 List all available groups with their details.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ServiceNow | OpenCTI |
 | TOOL | list_groups | list_groups |
@@ -1236,12 +1376,16 @@ List all available groups with their details.
 | SCORES(SERVER/TOOL/FINAL) | 0.448/0.755/0.255 | 0.493/0.900/0.400 |
 | RANKS(SERVER/TOOL/FINAL) | 191/13/41 | 75/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 93
 ## TASK
 Retrieve the details of the task with ID "TASK-12345" or, if not found, search for a task named "Q2 Marketing Campaign" using smart disambiguation.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ClickUp | OpenCTI |
 | TOOL | get_task | get_campaign_by_name |
@@ -1251,12 +1395,16 @@ Retrieve the details of the task with ID "TASK-12345" or, if not found, search f
 | SCORES(SERVER/TOOL/FINAL) | 0.503/0.585/0.172 | 0.516/0.662/0.226 |
 | RANKS(SERVER/TOOL/FINAL) | 82/23/37 | 62/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 94
 ## TASK
 Execute the action "send_email" with the parameters {"recipient": "john.doe@example.com", "subject": "Project Update", "body": "Please find the latest project updates attached."}.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Home Assistant | Telegram |
 | TOOL | execute_action | get_last_interaction |
@@ -1266,12 +1414,16 @@ Execute the action "send_email" with the parameters {"recipient": "john.doe@exam
 | SCORES(SERVER/TOOL/FINAL) | 0.462/0.602/0.168 | 0.473/0.636/0.191 |
 | RANKS(SERVER/TOOL/FINAL) | 83/4/13 | 71/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 95
 ## TASK
 Delete 50 inactive user nodes from the database in a single operation.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Talk To Figma | Ramp |
 | TOOL | delete_multiple_nodes | clear_table |
@@ -1281,27 +1433,35 @@ Delete 50 inactive user nodes from the database in a single operation.
 | SCORES(SERVER/TOOL/FINAL) | 0.388/0.733/0.208 | 0.503/0.677/0.231 |
 | RANKS(SERVER/TOOL/FINAL) | 233/1/7 | 23/4/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 96
 ## TASK
-Create a copy of the task with ID "TSK123" and move it to the target list with ID "LST456".
+Create a copy of the task with ID "TSK123" and move it to the GROUND TRUTH list with ID "LST456".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ClickUp | Todoist |
 | TOOL | duplicate_task | todoist_create_task |
 | S_DESC | 1.任务管理，包括创建、更新、删除、移动和复制任务 2.列表和文件夹管理，包括创建、更新和删除 3.标签管理，包括创建、更新、删除和关联任务 4.时间跟踪，包括开始、停止和记录时间条目 5.文档管理，包括创建、获取和更新文档页面 | Todoist任务管理,包括:任务创建、检索、更新、完成和删除 |
 | T_DESC | Copy task | Create new tasks with various attributes. |
-| PARAMETERS | taskId: (string) The ID of the task to duplicate<br>taskName: (Optional, string) The name of the task to duplicate<br>listId: (string) The ID of the target list<br>listName: (Optional, string) The name of the target list | content: (string) task title<br>description: (Optional, string) task description<br>due date: (Optional, string) due date<br>priority level: (Optional, number) priority level (1-4) |
+| PARAMETERS | taskId: (string) The ID of the task to duplicate<br>taskName: (Optional, string) The name of the task to duplicate<br>listId: (string) The ID of the GROUND TRUTH list<br>listName: (Optional, string) The name of the GROUND TRUTH list | content: (string) task title<br>description: (Optional, string) task description<br>due date: (Optional, string) due date<br>priority level: (Optional, number) priority level (1-4) |
 | SCORES(SERVER/TOOL/FINAL) | 0.536/0.652/0.228 | 0.574/0.655/0.246 |
 | RANKS(SERVER/TOOL/FINAL) | 8/9/7 | 2/8/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 97
 ## TASK
 Find nearby restaurants within a 5-mile radius of the current user location.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | AWS | Brave Search |
 | TOOL | Search for Places Near a Location | brave_local_search |
@@ -1311,12 +1471,16 @@ Find nearby restaurants within a 5-mile radius of the current user location.
 | SCORES(SERVER/TOOL/FINAL) | 0.434/0.739/0.237 | 0.579/0.646/0.241 |
 | RANKS(SERVER/TOOL/FINAL) | 173/1/2 | 2/5/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 102
 ## TASK
 Create a new folder named "Project_2024" under the parent folder with ID "12345" and set its description to "All project files for 2024".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Box | TickTick |
 | TOOL | box_manage_folder_tool | create_project |
@@ -1326,12 +1490,16 @@ Create a new folder named "Project_2024" under the parent folder with ID "12345"
 | SCORES(SERVER/TOOL/FINAL) | 0.398/0.541/0.117 | 0.540/0.636/0.218 |
 | RANKS(SERVER/TOOL/FINAL) | 247/100/339 | 3/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 104
 ## TASK
 Retrieve the details of the marketing campaign named "Summer Sale 2024".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | OpenCTI | Productboard |
 | TOOL | get_campaign_by_name | get_product_detail |
@@ -1341,12 +1509,16 @@ Retrieve the details of the marketing campaign named "Summer Sale 2024".
 | SCORES(SERVER/TOOL/FINAL) | 0.332/0.604/0.121 | 0.438/0.615/0.166 |
 | RANKS(SERVER/TOOL/FINAL) | 238/3/15 | 10/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 105
 ## TASK
 Create a new file at "/documents/report.txt" with the content "Quarterly sales report for Q2 2024: $1.2M revenue."
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Golang Filesystem Server | Financial Datasets |
 | TOOL | write_file | get_cash_flow_statements |
@@ -1356,12 +1528,16 @@ Create a new file at "/documents/report.txt" with the content "Quarterly sales r
 | SCORES(SERVER/TOOL/FINAL) | 0.452/0.551/0.138 | 0.531/0.634/0.213 |
 | RANKS(SERVER/TOOL/FINAL) | 61/37/42 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 106
 ## TASK
 Create a new documentation page in the team's knowledge base with the title "Project Onboarding Guide" and include sections for setup instructions, common issues, and contact information.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Atlassian | Graphlit |
 | TOOL | confluence_create_page | Configure Project |
@@ -1371,12 +1547,16 @@ Create a new documentation page in the team's knowledge base with the title "Pro
 | SCORES(SERVER/TOOL/FINAL) | 0.534/0.603/0.194 | 0.547/0.684/0.256 |
 | RANKS(SERVER/TOOL/FINAL) | 22/6/8 | 13/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 107
 ## TASK
 Push three configuration files (config.json, settings.yaml, and env.properties) to the "main" branch of the "project-x" repository under the owner "dev-team" with the commit message "Update configuration files".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | GitHub | llm-context |
 | TOOL | push_files | lc-init |
@@ -1386,12 +1566,16 @@ Push three configuration files (config.json, settings.yaml, and env.properties) 
 | SCORES(SERVER/TOOL/FINAL) | 0.455/0.615/0.172 | 0.609/0.631/0.242 |
 | RANKS(SERVER/TOOL/FINAL) | 82/3/13 | 2/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 108
 ## TASK
 Search for the latest research papers on quantum computing published in the last month, displaying results in English with moderate safe search filtering.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | SearXNG | Tavily search |
 | TOOL | searxng_web_search | tavily_news_search |
@@ -1401,12 +1585,16 @@ Search for the latest research papers on quantum computing published in the last
 | SCORES(SERVER/TOOL/FINAL) | 0.462/0.456/0.097 | 0.511/0.634/0.206 |
 | RANKS(SERVER/TOOL/FINAL) | 42/272/209 | 5/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 111
 ## TASK
 Retrieve the details of the import error with ID "ERR-2024-0015".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Airflow | Airflow |
 | TOOL | Get Import Error Details | Get Import Error Details |
@@ -1416,12 +1604,16 @@ Retrieve the details of the import error with ID "ERR-2024-0015".
 | SCORES(SERVER/TOOL/FINAL) | 0.350/0.742/0.192 | 0.350/0.742/0.192 |
 | RANKS(SERVER/TOOL/FINAL) | 236/1/1 | 236/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 113
 ## TASK
 List all files and subfolders within the folder with ID "F12345" recursively.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Box | Terminal-Control |
 | TOOL | box_list_folder_content_by_folder_id | list_directory |
@@ -1431,12 +1623,16 @@ List all files and subfolders within the folder with ID "F12345" recursively.
 | SCORES(SERVER/TOOL/FINAL) | 0.405/0.690/0.193 | 0.471/0.717/0.242 |
 | RANKS(SERVER/TOOL/FINAL) | 116/4/9 | 10/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 114
 ## TASK
 List all available datasets in the connected database.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Airflow | ClickHouse |
 | TOOL | List Datasets | list_tables |
@@ -1446,27 +1642,35 @@ List all available datasets in the connected database.
 | SCORES(SERVER/TOOL/FINAL) | 0.484/0.861/0.359 | 0.626/0.825/0.426 |
 | RANKS(SERVER/TOOL/FINAL) | 107/1/7 | 2/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 115
 ## TASK
-Apply the extracted configuration overrides to the specified target instances.
+Apply the extracted configuration overrides to the specified GROUND TRUTH instances.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Talk To Figma | Talk To Figma |
 | TOOL | set_instance_overrides | set_instance_overrides |
 | S_DESC | Figma文档操作，包括：获取文档信息、节点操作（创建/修改/删除）、文本处理、布局设置、颜色与样式管理、组件实例操作、图像导出及通信通道管理 | Figma文档操作，包括：获取文档信息、节点操作（创建/修改/删除）、文本处理、布局设置、颜色与样式管理、组件实例操作、图像导出及通信通道管理 |
-| T_DESC | Apply extracted overrides to target instances | Apply extracted overrides to target instances |
+| T_DESC | Apply extracted overrides to GROUND TRUTH instances | Apply extracted overrides to GROUND TRUTH instances |
 | PARAMETERS |  |  |
 | SCORES(SERVER/TOOL/FINAL) | 0.399/0.909/0.330 | 0.399/0.909/0.330 |
 | RANKS(SERVER/TOOL/FINAL) | 245/1/1 | 245/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 116
 ## TASK
 Retrieve all comments associated with the latest published post.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | CoinMarketCap | HDW LinkedIn |
 | TOOL | contentPostsComments | get_linkedin_post_comments |
@@ -1476,12 +1680,16 @@ Retrieve all comments associated with the latest published post.
 | SCORES(SERVER/TOOL/FINAL) | 0.432/0.701/0.213 | 0.468/0.745/0.260 |
 | RANKS(SERVER/TOOL/FINAL) | 96/4/6 | 34/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 118
 ## TASK
 Delete all documents from the 'users' collection where the 'status' field is set to 'inactive'.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | MongoDB | Ghost |
 | TOOL | delete-many | Delete User |
@@ -1491,27 +1699,35 @@ Delete all documents from the 'users' collection where the 'status' field is set
 | SCORES(SERVER/TOOL/FINAL) | 0.412/0.594/0.145 | 0.500/0.649/0.211 |
 | RANKS(SERVER/TOOL/FINAL) | 67/33/51 | 3/6/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 119
 ## TASK
 Execute a PromQL query to retrieve the current CPU usage percentage of all nodes in the Kubernetes cluster.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Prometheus | Kubernetes and OpenShift |
 | TOOL | execute_query | resources_get |
-| S_DESC | 1. Execute PromQL instant and range queries against Prometheus 2. List all available metrics in Prometheus 3. Get metadata for a specific metric 4. Get information about all scrape targets | Kubernetes集群管理，包括：配置查看、事件列表、命名空间管理、Pod操作（创建/删除/执行命令/获取日志）、资源管理（创建/更新/删除/获取/列表） |
+| S_DESC | 1. Execute PromQL instant and range queries against Prometheus 2. List all available metrics in Prometheus 3. Get metadata for a specific metric 4. Get information about all scrape GROUND TRUTHs | Kubernetes集群管理，包括：配置查看、事件列表、命名空间管理、Pod操作（创建/删除/执行命令/获取日志）、资源管理（创建/更新/删除/获取/列表） |
 | T_DESC | Execute a PromQL instant query against Prometheus | Get a Kubernetes resource in the current cluster |
 | PARAMETERS | query: (string) The PromQL query to execute | apiVersion: (Required, string) apiVersion of the resource (e.g., v1, apps/v1, networking.k8s.io/v1)<br>kind: (Required, string) kind of the resource (e.g., Pod, Service, Deployment, Ingress)<br>name: (Required, string) Name of the resource<br>namespace: (Optional, string) Namespace to retrieve the namespaced resource from. Ignored for cluster-scoped resources. Uses configured namespace if not provided. |
 | SCORES(SERVER/TOOL/FINAL) | 0.582/0.604/0.212 | 0.557/0.682/0.259 |
 | RANKS(SERVER/TOOL/FINAL) | 1/15/8 | 4/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: HIGHER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 120
 ## TASK
 List all available pools in the system.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Airflow | Airflow |
 | TOOL | List Pools | List Pools |
@@ -1521,12 +1737,16 @@ List all available pools in the system.
 | SCORES(SERVER/TOOL/FINAL) | 0.432/0.910/0.358 | 0.432/0.910/0.358 |
 | RANKS(SERVER/TOOL/FINAL) | 178/1/1 | 178/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 121
 ## TASK
 Create a new directory named "project_assets" within the current workspace.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | PIF | TickTick |
 | TOOL | mkdir | create_project |
@@ -1536,12 +1756,16 @@ Create a new directory named "project_assets" within the current workspace.
 | SCORES(SERVER/TOOL/FINAL) | 0.554/0.607/0.204 | 0.523/0.698/0.255 |
 | RANKS(SERVER/TOOL/FINAL) | 2/56/19 | 7/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: HIGHER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 123
 ## TASK
 Retrieve the details of the document generation template with the identifier "TMPL12345".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Box | eSignatures |
 | TOOL | box_docgen_template_get_by_id_tool | query_template |
@@ -1551,12 +1775,16 @@ Retrieve the details of the document generation template with the identifier "TM
 | SCORES(SERVER/TOOL/FINAL) | 0.344/0.731/0.184 | 0.454/0.710/0.229 |
 | RANKS(SERVER/TOOL/FINAL) | 278/1/3 | 57/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 124
 ## TASK
 Retrieve the user details associated with the email address "user@example.com".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ServiceNow | EduBase |
 | TOOL | get_user | edubase_get_user |
@@ -1566,12 +1794,16 @@ Retrieve the user details associated with the email address "user@example.com".
 | SCORES(SERVER/TOOL/FINAL) | 0.380/0.670/0.170 | 0.679/0.708/0.340 |
 | RANKS(SERVER/TOOL/FINAL) | 279/11/83 | 1/3/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 126
 ## TASK
 Compare the schemas of two specified collections to identify any differences in their structure.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | MongoDB Lens | MongoDB Lens |
 | TOOL | compare-schemas | compare-schemas |
@@ -1581,12 +1813,16 @@ Compare the schemas of two specified collections to identify any differences in 
 | SCORES(SERVER/TOOL/FINAL) | 0.376/0.908/0.310 | 0.376/0.908/0.310 |
 | RANKS(SERVER/TOOL/FINAL) | 161/1/1 | 161/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 128
 ## TASK
 Retrieve the full details of the place identified by PlaceId "PL123456789".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | AWS | Travel Planner |
 | TOOL | Get Details for Specific Places | getPlaceDetails |
@@ -1596,12 +1832,16 @@ Retrieve the full details of the place identified by PlaceId "PL123456789".
 | SCORES(SERVER/TOOL/FINAL) | 0.341/0.813/0.225 | 0.534/0.679/0.246 |
 | RANKS(SERVER/TOOL/FINAL) | 236/1/2 | 2/4/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 129
 ## TASK
 Retrieve the value of the variable associated with the key "user_session_token".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Airflow | EduBase |
 | TOOL | Get Variable | edubase_get_user |
@@ -1611,12 +1851,16 @@ Retrieve the value of the variable associated with the key "user_session_token".
 | SCORES(SERVER/TOOL/FINAL) | 0.400/0.630/0.159 | 0.590/0.623/0.229 |
 | RANKS(SERVER/TOOL/FINAL) | 237/15/57 | 1/17/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 132
 ## TASK
 Read the contents of a binary file named "data.dat" located in the "/documents" directory.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | AWS | Filesystem |
 | TOOL | File Access with Text and Binary Support | read_file |
@@ -1626,12 +1870,16 @@ Read the contents of a binary file named "data.dat" located in the "/documents" 
 | SCORES(SERVER/TOOL/FINAL) | 0.435/0.689/0.206 | 0.584/0.641/0.240 |
 | RANKS(SERVER/TOOL/FINAL) | 148/1/9 | 1/7/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: SEARCH RESULT
+- NOTE: NONE 
 
 # BAD CASE 133
 ## TASK
 Remove the document with the key "user123" from the "customers" collection.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ArangoDB | Ghost |
 | TOOL | arango_remove | Delete User |
@@ -1641,12 +1889,16 @@ Remove the document with the key "user123" from the "customers" collection.
 | SCORES(SERVER/TOOL/FINAL) | 0.365/0.619/0.140 | 0.484/0.681/0.224 |
 | RANKS(SERVER/TOOL/FINAL) | 146/10/35 | 4/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 134
 ## TASK
 Update or insert a document with the ID "user_12345" into the "customers" collection within the "ecommerce" scope. Ensure the document contains the latest customer details including name, email, and purchase history.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Couchbase | Shopify |
 | TOOL | upsert_document_by_id | update-customer |
@@ -1656,12 +1908,16 @@ Update or insert a document with the ID "user_12345" into the "customers" collec
 | SCORES(SERVER/TOOL/FINAL) | 0.484/0.612/0.181 | 0.632/0.712/0.320 |
 | RANKS(SERVER/TOOL/FINAL) | 94/8/27 | 1/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 137
 ## TASK
 List all document generation jobs that used template ID "TMPL12345", showing a maximum of 50 jobs per page. If there are more results, use the provided pagination marker to fetch the next batch.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Box | Outline |
 | TOOL | box_docgen_template_list_jobs_tool | Read a Document |
@@ -1671,12 +1927,16 @@ List all document generation jobs that used template ID "TMPL12345", showing a m
 | SCORES(SERVER/TOOL/FINAL) | 0.401/0.641/0.165 | 0.577/0.562/0.187 |
 | RANKS(SERVER/TOOL/FINAL) | 243/1/17 | 1/24/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 138
 ## TASK
 List all active documents in workspace "WS123" created by "user1", excluding deleted and archived items, with a limit of 50 documents per page.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | ClickUp | SingleStore |
 | TOOL | list_documents | list_virtual_workspaces |
@@ -1686,12 +1946,16 @@ List all active documents in workspace "WS123" created by "user1", excluding del
 | SCORES(SERVER/TOOL/FINAL) | 0.528/0.597/0.188 | 0.629/0.626/0.248 |
 | RANKS(SERVER/TOOL/FINAL) | 12/12/18 | 1/5/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 139
 ## TASK
 Update the document with ID "user123" in the "customers" collection by changing the "status" field to "active".
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Firebase | Shopify |
 | TOOL | firestore_update_document | update-customer |
@@ -1701,12 +1965,16 @@ Update the document with ID "user123" in the "customers" collection by changing 
 | SCORES(SERVER/TOOL/FINAL) | 0.457/0.671/0.206 | 0.612/0.726/0.322 |
 | RANKS(SERVER/TOOL/FINAL) | 148/7/22 | 1/2/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 140
 ## TASK
 Generate a detailed summary of the key themes and insights from the provided research paper on renewable energy technologies.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | HuggingFace Spaces | Deepseek_R1 |
 | TOOL | use Qwen2.5-72B-Instruct | deepseek_r1 |
@@ -1716,12 +1984,16 @@ Generate a detailed summary of the key themes and insights from the provided res
 | SCORES(SERVER/TOOL/FINAL) | 0.320/0.402/0.052 | 0.454/0.495/0.111 |
 | RANKS(SERVER/TOOL/FINAL) | 200/297/578 | 2/7/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 141
 ## TASK
 Delete the resource located at `https://api.example.com/users/123` with the header `Authorization: Bearer token123`.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Rquest | Ghost |
 | TOOL | http_delete | Delete User |
@@ -1731,12 +2003,16 @@ Delete the resource located at `https://api.example.com/users/123` with the head
 | SCORES(SERVER/TOOL/FINAL) | 0.440/0.613/0.165 | 0.502/0.640/0.206 |
 | RANKS(SERVER/TOOL/FINAL) | 65/2/8 | 9/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: LOWER 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
 # BAD CASE 143
 ## TASK
 List all available contacts in the address book.
 ## DETAILS
-| Item | TARGET | MATCHED |
+| Item | GROUND TRUTH | SEARCH RESULT |
 | ---- | ------ | ------- |
 | SERVER | Telegram | Telegram |
 | TOOL | list_contacts | list_contacts |
@@ -1746,4 +2022,8 @@ List all available contacts in the address book.
 | SCORES(SERVER/TOOL/FINAL) | 0.454/0.929/0.392 | 0.454/0.929/0.392 |
 | RANKS(SERVER/TOOL/FINAL) | 106/1/1 | 106/1/1 |
 ## ANALYSIS
+- SERVER_SCORE: EQUAL 
+- MATCH: NONE 
+- AI_JUDGE: GROUND TRUTH
+- NOTE: NONE 
 
