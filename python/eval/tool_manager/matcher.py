@@ -19,6 +19,25 @@ class ToolMatchResult:
     score: float
 
 
+@dataclass
+class Score:
+    server_score: float
+    server_rank: int
+    tool_score: float
+    tool_rank: int
+    final_score: float
+    final_rank: int
+
+
+@dataclass
+class AnalyzeResult:
+    task: str
+    target_tool: ManagerTool
+    target_score: Score
+    matched_tool: ManagerTool
+    matched_score: Score
+
+
 class ToolMatcher:
     def __init__(self):
         self.embedding_model = OllamaEmbeddings(
@@ -55,7 +74,7 @@ class ToolMatcher:
         except Exception as e:
             raise ValueError(f"Error loading tool data: {e}")
 
-    def match(self, task, pass_at_k: int = 1, two_steps:bool = True) -> List[ToolMatchResult]:
+    def match(self, task, pass_at_k: int = 1, two_steps: bool = True) -> List[ToolMatchResult]:
         # 准备匹配结果
         # server_docs = self.server_retriever.similarity_search_with_score(mcp_server.server, filter={'domain': mcp_server.domain}, k=5)
         if two_steps:
@@ -102,4 +121,63 @@ class ToolMatcher:
         # 取前1个工具（与matcher.py中的top_tools保持一致）
         matched_tools = tool_scores[:pass_at_k]
         return [ToolMatchResult(server=matched_tool['server'], tool=matched_tool['tool'],
-                               score=matched_tool['final_rank']) for matched_tool in matched_tools]
+                                score=matched_tool['final_rank']) for matched_tool in matched_tools]
+
+    def analyze_two_steps(self, task: str, target: ManagerTool) -> AnalyzeResult:
+        # 准备匹配结果
+        # server_docs = self.server_retriever.similarity_search_with_score(mcp_server.server, filter={'domain': mcp_server.domain}, k=5)
+        server_docs = self.server_retriever.similarity_search_with_relevance_scores(task, k=1000)
+        # 使用ToolMatcher进行分层匹配
+        # 第一阶段：匹配服务器
+        server_scores = []
+        for rank, (server_doc, server_score) in enumerate(server_docs):
+            server_scores.append({
+                "name": server_doc.metadata['name'],
+                "score": server_score,
+                "rank": rank + 1,
+            })
+
+        matched_servers = {server['name']: server for server in server_scores}
+        tool_docs = self.tool_retriever.similarity_search_with_relevance_scores(task, k=1000)
+        tool_scores = []
+        for tool_rank, (tool_doc, tool_score) in enumerate(tool_docs):
+            tool = from_dict(ManagerTool, json.loads(tool_doc.metadata["info"]))
+            if (tool.server not in matched_servers):
+                continue
+            server_score = matched_servers[tool.server]['score']
+            final_score = (server_score * tool_score) * max(server_score, tool_score)
+            tool_scores.append({
+                "server": tool.server,
+                "server_score": server_score,
+                "tool": tool,
+                "tool_score": tool_score,
+                "final_score": final_score,
+                "server_rank": matched_servers[tool.server]['rank'],
+                "tool_rank": tool_rank + 1,
+            })
+
+        # 按最终得分降序排序
+        tool_scores.sort(key=lambda x: x["final_score"], reverse=True)
+        target_final_rank = -1
+        for final_rank, final_score in enumerate(tool_scores):
+            if final_score["server"] == target.server and final_score["tool"].name == target.name:
+                target_final_rank = final_rank + 1
+                break
+        if target_final_rank == -1:
+            target_score = Score(server_score=0.0, tool_score=0.0,
+                                 final_score=0.0,
+                                 server_rank=-1, tool_rank=-1,
+                                 final_rank=-1)
+        else:
+            target_result = tool_scores[target_final_rank - 1]
+            target_score = Score(server_score=target_result["server_score"], tool_score=target_result["tool_score"],
+                                 final_score=target_result['final_score'],
+                                 server_rank=target_result['server_rank'], tool_rank=target_result['tool_rank'],
+                                 final_rank=target_final_rank)
+        matched_result = tool_scores[0]
+        matched_score = Score(server_score=matched_result["server_score"], tool_score=matched_result["tool_score"],
+                              final_score=matched_result['final_score'],
+                              server_rank=matched_result['server_rank'], tool_rank=matched_result['tool_rank'],
+                              final_rank=1)
+        return AnalyzeResult(task=task, target_tool=target, matched_tool=tool_scores[0]['tool'],
+                             target_score=target_score, matched_score=matched_score)

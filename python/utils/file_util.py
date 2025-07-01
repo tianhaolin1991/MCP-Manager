@@ -44,6 +44,7 @@ def from_dict(cls: Type[T], data: dict) -> T:
 
     return cls(**processed_data)
 
+
 def read_json_file(file_path: str, cls: Type[T]) -> List[T]:
     """读取JSON文件并将其转换为指定类的对象"""
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -61,7 +62,9 @@ def dataclass_to_json(obj: Any, indent: int = None) -> str:
             return {k: _serialize(v) for k, v in obj.items()}
         else:
             return obj
+
     return json.dumps(_serialize(obj), ensure_ascii=False, indent=indent)
+
 
 def read_jsonl_file(file_path, cls: Type[T]) -> List[T]:
     jsons = []
@@ -76,14 +79,21 @@ def read_jsonl_file(file_path, cls: Type[T]) -> List[T]:
             jsons.append(from_dict(cls, data))
     return jsons
 
+
 def append_jsonl_file(file_path, json_obj):
     with open(file_path, 'a', encoding='utf-8') as f:
         json_line = dataclass_to_json(json_obj)
         f.write(json_line + '\n')
 
+
+def append(file_path, content):
+    with open(file_path, 'a', encoding='utf-8') as f:
+        f.write(content + '\n')
+
 def remove_file(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
+
 
 def read_file(file_path):
     with open(file_path, 'r', encoding='utf-8') as f:

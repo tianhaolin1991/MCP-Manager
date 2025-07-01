@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 from typing import List
 
+
 @dataclass
 class ZeroTool:
     name: str
     description: str
     parameter: dict[str, str]
+
 
 @dataclass
 class ZeroServer:
@@ -20,15 +22,17 @@ class ZeroServer:
 @dataclass
 class ManagerTool:
     name: str
-    server:str
+    server: str
     description: str
     parameter: dict[str, str]
     task: str = ""
+
 
 @dataclass
 class Domain:
     name: str
     description: str
+
 
 @dataclass
 class ManagerServer:
@@ -37,8 +41,15 @@ class ManagerServer:
     tools: List[ManagerTool]
     domains: List[Domain]
 
+    def tool(self, name: str):
+        for tool in self.tools:
+            if tool.name == name:
+                return tool
+        return None
+
+
 @dataclass
 class ManagerServerEmbeddings:
-    name:str
+    name: str
     server: List[float]
     tools: List[List[float]]
