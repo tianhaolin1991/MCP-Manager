@@ -33,8 +33,10 @@ class Score:
 class AnalyzeResult:
     task: str
     target_tool: ManagerTool
-    target_score: Score
     matched_tool: ManagerTool
+    target_server_desc: str
+    matched_server_desc: str
+    target_score: Score
     matched_score: Score
 
 
@@ -184,4 +186,4 @@ class ToolMatcher:
                               server_rank=matched_result['server_rank'], tool_rank=matched_result['tool_rank'],
                               final_rank=1)
         return AnalyzeResult(task=task, target_tool=target, matched_tool=tool_scores[0]['tool'],
-                             target_score=target_score, matched_score=matched_score)
+                             target_score=target_score, matched_score=matched_score, target_server_desc='', matched_server_desc='')

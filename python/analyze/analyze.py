@@ -18,7 +18,8 @@ def to_markdown(index:int, ar:AnalyzeResult):
     markdown_output += "| Item | TARGET | MATCHED |\n| ---- | ------ | ------- |\n"
     markdown_output += f"| SERVER | {ar.target_tool.server} | {ar.matched_tool.server} |\n"
     markdown_output += f"| TOOL | {ar.target_tool.name} | {ar.matched_tool.name} |\n"
-    markdown_output += f"| DESC | {ar.target_tool.description} | {ar.matched_tool.description} |\n"
+    markdown_output += f"| S_DESC | {ar.target_server_desc} | {ar.matched_server_desc} |\n"
+    markdown_output += f"| T_DESC | {ar.target_tool.description} | {ar.matched_tool.description} |\n"
     target_params = [f"{k}: {v}" for k, v in ar.target_tool.parameter.items()]
     matched_params = [f"{k}: {v}" for k, v in ar.matched_tool.parameter.items()]
     markdown_output += f"| PARAMETERS | {'<br>'.join(target_params)} | {'<br>'.join(matched_params)} |\n"
@@ -42,9 +43,9 @@ if __name__ == "__main__":
         id = f'{server_name}-{tool_name}'
         if id in visited:
             continue
-        best_match_server = case.matched_server
-        best_match_tool = case.matched_tool
         analyze_result = tool_matcher.analyze_two_steps(case.task, MANAGER_SERVER_DICT[server_name].tool(tool_name))
+        analyze_result.target_server_desc = MANAGER_SERVER_DICT[server_name].description
+        analyze_result.matched_server_desc = MANAGER_SERVER_DICT[analyze_result.matched_tool.server].description
         md = to_markdown(index, analyze_result)
         append(output, md)
         visited.add(id)
