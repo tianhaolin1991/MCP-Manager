@@ -1,7 +1,7 @@
 from langchain_community.vectorstores import FAISS, DistanceStrategy
 from langchain_core.embeddings import Embeddings
 from bean.bean import ManagerServer, ManagerServerEmbeddings
-from config.config import PROJECT_PATH, DB_TYPE
+from config.config import PROJECT_PATH, DB_TYPE, EMBEDDING_CACHE_FILE
 from utils.file_util import read_jsonl_file, dataclass_to_json
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
@@ -12,7 +12,7 @@ ALL_MANAGER_SERVERS = read_jsonl_file('data/mcp-manager/manager_servers.jsonl', 
 class CachedEmbeddings(Embeddings):
     def __init__(self):
         servers = ALL_MANAGER_SERVERS
-        embeddings = read_jsonl_file('data/mcp-manager/embedding_qwen3_0.6b.jsonl', ManagerServerEmbeddings)
+        embeddings = read_jsonl_file(EMBEDDING_CACHE_FILE, ManagerServerEmbeddings)
         name_to_embeddings = {embedding.name: embedding for embedding in embeddings}
         self.embedding_dict = {}
         for server in servers:
