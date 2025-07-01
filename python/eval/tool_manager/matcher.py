@@ -74,7 +74,7 @@ class ToolMatcher:
         except Exception as e:
             raise ValueError(f"Error loading tool data: {e}")
 
-    def match(self, task, pass_at_k: int = 1, two_steps: bool = True) -> List[ToolMatchResult]:
+    def match(self, task, pass_at_k: int = 5, two_steps: bool = True) -> List[ToolMatchResult]:
         # 准备匹配结果
         # server_docs = self.server_retriever.similarity_search_with_score(mcp_server.server, filter={'domain': mcp_server.domain}, k=5)
         if two_steps:
@@ -102,26 +102,30 @@ class ToolMatcher:
             if two_steps and (tool.server not in matched_servers):
                 continue
             if two_steps:
-                server_rank = matched_servers[tool.server]['rank'] if two_steps else 1
-                final_rank = 1 / server_rank + 1 / (tool_rank + 1)
+                server_score = matched_servers[tool.server]['score']
+                final_score = (server_score * tool_score) * max(server_score, tool_score)
+                server_rank = matched_servers[tool.server]['rank']
             else:
-                server_rank = 1
-                final_rank = 1 / (tool_rank + 1)
+                server_score = 0.0
+                final_score = tool_score
+                server_rank = 0
             tool_scores.append({
                 "server": tool.server,
-                "server_rank": server_rank,
+                "server_score": server_score,
                 "tool": tool,
-                "tool_rank": tool_rank,
-                "final_rank": final_rank
+                "tool_score": tool_score,
+                "final_score": final_score,
+                "server_rank": server_rank,
+                "tool_rank": tool_rank + 1
             })
 
         # 按最终得分降序排序
-        tool_scores.sort(key=lambda x: x["final_rank"], reverse=True)
+        tool_scores.sort(key=lambda x: x["final_score"], reverse=True)
 
         # 取前1个工具（与matcher.py中的top_tools保持一致）
         matched_tools = tool_scores[:pass_at_k]
         return [ToolMatchResult(server=matched_tool['server'], tool=matched_tool['tool'],
-                                score=matched_tool['final_rank']) for matched_tool in matched_tools]
+                                score=matched_tool['final_score']) for matched_tool in matched_tools]
 
     def analyze_two_steps(self, task: str, target: ManagerTool) -> AnalyzeResult:
         # 准备匹配结果

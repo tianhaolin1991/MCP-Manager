@@ -1,24 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
-import sys
-import time
-from dataclasses import dataclass
-
-from langchain_core.output_parsers import PydanticOutputParser
-from openai import BaseModel
-from pydantic import Field
-from tenacity import retry, stop_after_attempt, wait_fixed
-
-from bean.bean import Domain, ManagerServer, ManagerTool
+from bean.bean import ManagerServer
 from eval.tool_manager.matcher import ToolMatcher, AnalyzeResult
-from eval.tool_manager.sampler import ToolSampler
-from eval.tool_manager_evaluate import ToolSelectionResult
-from eval.utils import generate_grid_search_params
-from utils.file_util import read_jsonl_file, dataclass_to_json, append_jsonl_file, append
+from tool_manager_evaluate import ToolSelectionResult
+from utils.file_util import read_jsonl_file, append
 
-results = read_jsonl_file("../data/eval/tool_manager/task/manager_grid_search_results_pass@5_$2steps.jsonl", ToolSelectionResult)
+results = read_jsonl_file("../data/eval/tool_manager/task/manager_grid_search_results_pass@5_2steps.jsonl", ToolSelectionResult)
 BAD_CASES = [sr for sr in results if not sr.is_correct]
 MANAGER_SERVER_DICT = {server.name: server for server in
                        read_jsonl_file("../data/mcp-manager/manager_servers.jsonl", ManagerServer)}
