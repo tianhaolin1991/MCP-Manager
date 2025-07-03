@@ -8,7 +8,8 @@ from typing import List, Tuple
 def generate_grid_search_params(
     num_position_ratios: int = 20,
     num_sample_sizes: int = 50,
-    total_tools: int = 2797
+    total_tools: int = 2797,
+    last_grid_only:bool = False
 ) -> Tuple[List[float], List[int]]:
     """
     生成网格搜索参数
@@ -28,7 +29,8 @@ def generate_grid_search_params(
     # 使用对数空间进行均匀分割，然后取指数得到实际的样本大小
     log_space = np.linspace(np.log(1), np.log(total_tools), num_sample_sizes)
     sample_sizes = [max(1, int(np.round(np.exp(x)))) for x in log_space]
-    
+    if last_grid_only:
+        sample_sizes = [sample_sizes[-1]]
     # 生成位置索引列表: 样本数量 * 位置比例，取整
     position_indexes = []
     for sample_size in sample_sizes:

@@ -41,16 +41,16 @@ class AnalyzeResult:
 
 
 class ToolMatcher:
-    def __init__(self):
+    def __init__(self, embedding_model=EMBEDDING_MODEL, persist_directory=f'{PROJECT_PATH}//chroma'):
         self.embedding_model = OllamaEmbeddings(
             base_url=OLLAMA_URL,
-            model=EMBEDDING_MODEL
+            model=embedding_model
         )
         if DB_TYPE == 'chroma':
-            self.server_retriever = Chroma(collection_name='server', persist_directory=f'{PROJECT_PATH}//chroma',
+            self.server_retriever = Chroma(collection_name='server', persist_directory=persist_directory,
                                            embedding_function=self.embedding_model,
                                            collection_metadata={"hnsw:space": "cosine"})
-            self.tool_retriever = Chroma(collection_name='tool', persist_directory=f'{PROJECT_PATH}//chroma',
+            self.tool_retriever = Chroma(collection_name='tool', persist_directory=persist_directory,
                                          embedding_function=self.embedding_model,
                                          collection_metadata={"hnsw:space": "cosine"})
         else:
@@ -78,9 +78,17 @@ class ToolMatcher:
 
     def match(self, task, pass_at_k: int = 5, two_steps: bool = True) -> List[ToolMatchResult]:
         # 准备匹配结果
+        if isinstance(task, str):
+            server_query = task
+            tool_query = task
+        elif isinstance(task, dict):
+            server_query = task["category"]
+            tool_query = task["query"]
+        else:
+            raise Exception(f"UNKNOWN TASK {task}")
         # server_docs = self.server_retriever.similarity_search_with_score(mcp_server.server, filter={'domain': mcp_server.domain}, k=5)
         if two_steps:
-            server_docs = self.server_retriever.similarity_search_with_relevance_scores(task, k=100)
+            server_docs = self.server_retriever.similarity_search_with_relevance_scores(server_query, k=100)
         else:
             server_docs = []
         # 使用ToolMatcher进行分层匹配
@@ -95,7 +103,7 @@ class ToolMatcher:
 
         matched_servers = {server['name']: server for server in server_scores}
 
-        tool_docs = self.tool_retriever.similarity_search_with_relevance_scores(task, k=100)
+        tool_docs = self.tool_retriever.similarity_search_with_relevance_scores(tool_query, k=100)
         tool_scores = []
         for tool_rank, (tool_doc, tool_score) in enumerate(tool_docs):
             tool = from_dict(ManagerTool, json.loads(tool_doc.metadata["info"]))
@@ -186,4 +194,5 @@ class ToolMatcher:
                               server_rank=matched_result['server_rank'], tool_rank=matched_result['tool_rank'],
                               final_rank=1)
         return AnalyzeResult(task=task, target_tool=target, matched_tool=tool_scores[0]['tool'],
-                             target_score=target_score, matched_score=matched_score, target_server_desc='', matched_server_desc='')
+                             target_score=target_score, matched_score=matched_score, target_server_desc='',
+                             matched_server_desc='')

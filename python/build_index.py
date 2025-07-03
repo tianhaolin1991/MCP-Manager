@@ -6,18 +6,18 @@ from utils.file_util import read_jsonl_file, dataclass_to_json
 from langchain_chroma import Chroma
 from langchain_core.documents import Document
 
-ALL_MANAGER_SERVERS = read_jsonl_file('data/mcp-manager/manager_servers.jsonl', ManagerServer)
+ALL_MANAGER_SERVERS = read_jsonl_file('data/mcp-manager/manager_servers_old.jsonl', ManagerServer)
 
 
 class CachedEmbeddings(Embeddings):
-    def __init__(self):
+    def __init__(self, cache_file = EMBEDDING_CACHE_FILE):
         servers = ALL_MANAGER_SERVERS
-        embeddings = read_jsonl_file(EMBEDDING_CACHE_FILE, ManagerServerEmbeddings)
+        embeddings = read_jsonl_file(cache_file, ManagerServerEmbeddings)
         name_to_embeddings = {embedding.name: embedding for embedding in embeddings}
         self.embedding_dict = {}
         for server in servers:
             server_embedding = name_to_embeddings[server.name]
-            self.embedding_dict[server.description] = server_embedding.server
+            # self.embedding_dict[server.description] = server_embedding.server
             tool_embeddings = server_embedding.tools
             for i, tool in enumerate(server.tools):
                 tool_embedding = tool_embeddings[i]

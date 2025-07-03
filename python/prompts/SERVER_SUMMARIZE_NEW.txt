@@ -1,0 +1,159 @@
+# Objective
+Extract the core information of the current server based on the server name and tool descriptions.
+
+# Output Schema
+{{
+    "functionalities": ["category 1", "category 2"],
+    "product_or_platform": "product or platform the server belongs to",
+    "domains": ["domain 1","domain 2"]
+}}
+
+# Rules
+- **functionalities**: Group similar functionalities into the minimal number of broad technical categories.
+- **product_or_platform**: product or platform the server belongs to, keep it empty if no enough information.
+- **domains**: domains of the server
+- output in English
+
+# Examples
+----- Example 1 -----
+## Server
+amap-maps
+## Tools
+maps_direction_transit_integrated:根据用户起终点经纬度坐标规划综合各类公共(火车、公交、地铁)交通方式的通勤方案，并且返回通勤方案的数据，跨城场景下必须传起点城市与终点城市
+-----
+maps_direction_walking:根据输入起点终点经纬度坐标规划100km 以内的步行通勤方案，并且返回通勤方案的数据
+-----
+maps_weather:根据城市名称或者标准adcode查询指定城市的天气
+## Output
+```json
+{{
+    "functionalities": ["Map Service","Weather Service"],
+    "product_or_platform": "amap",
+    "domain": ["Location & Environmental Service"]
+}}
+```
+----- Example 2 -----
+## Server
+MCP-MySql-Go
+## Tools
+mysql_creator:在MySQL中创建数据库与表结构
+-----
+mysql_querier:在MySQL中执行SELECT操作
+-----
+mysql_operator:在MySQL中执行INSERT/UPDATE/DELETE操作
+-----
+mysql_optimizer:分析MySQL查询执行计划并优化索引
+-----
+mysql_backup:对MySQL数据库进行热备份与增量恢复
+-----
+mysql_monitor:监控MySQL服务器性能指标与连接状态
+## Output
+```json
+{{
+    "functionalities": ["Database CRUD Operations", "Database Maintenance"],
+    "product_or_platform": "MySQL",
+    "domains": ["Database Management"]
+}}
+```
+
+----- Example 3 -----
+## Server
+AWS
+## Tools
+aws_ec2:创建与管理AWS EC2实例资源
+-----
+aws_s3:在AWS S3中存储与管理对象文件
+-----
+aws_lambda:部署无服务器函数到AWS Lambda
+-----
+aws_cloudwatch:监控AWS资源的性能与日志数据
+## Output
+```json
+{{
+    "functionalities": ["EC2 Management", "S3 Storage", "Lambda Serverless Computing", "Cloud CloudWatch"],
+    "product_or_platform": "AWS",
+    "domains": ["Cloud Computing"]
+}}
+```
+
+----- Example 4 -----
+## Server
+Adobe
+## Tools
+adobe_cc_video_editor:在Adobe Premiere Pro中进行4K视频剪辑与时间线编排
+-----
+adobe_cc_effects:在Adobe After Effects中制作文字动态特效与粒子效果
+-----
+adobe_cc_audio_recorder:用Adobe Audition录制人声与环境音
+-----
+adobe_cc_audio_editor:用Adobe Audition进行音频降噪与多轨道混音
+-----
+adobe_cc_media_encoder:用Adobe Media Encoder导出H.264/ProRes格式视频
+-----
+adobe_cc_character_animator:用Adobe Character Animator制作表情捕捉动画
+## Output
+```json
+{{
+    "functionalities": ["Video Editing", "Motion Graphics", "Audio Production", "Media Encoding", "Character Animation"],
+    "product_or_platform": "Adobe Creative Cloud",
+    "domains": ["Video Production", "Audio Production"]
+}}
+```
+
+----- Example 5 -----
+## Server
+ALL IN One
+## Tools
+remove_image_background:删除图片的背景
+-----
+adjust_brightness_image:调整图片亮度
+-----
+add_watermark_image:添加图片水印
+-----
+get_current_price:通过公司股票代码查询当前股票价格
+
+## Output
+```json
+{{
+    "functionalities": ["Image Editing", "Financial Information Query"],
+    "product_or_platform": "",
+    "domains": ["Image Processing", "Finance"]
+}}
+```
+
+----- Example 6 -----
+## Server
+Machine Learning Tools
+## Tools
+tensorflow_train: 使用TensorFlow训练图像分类模型
+-----
+pytorch_inference: 在PyTorch中部署自然语言处理推理服务
+-----
+mlflow_tracking: 用MLflow跟踪机器学习实验参数与指标
+-----
+pytorch_train: 使用 PyTorch 训练语音识别模型
+-----
+keras_train: 使用 Keras 训练文本分类模型
+-----
+tensorrt_inference: 使用 TensorRT 加速计算机视觉模型推理
+-----
+onnx_inference: 基于 ONNX 格式部署跨框架推理服务
+-----
+wandb_evaluation: 用 Weights & Biases 评估模型性能指标
+-----
+scikit_evaluate: 用 scikit-learn 计算分类 / 回归评估指标
+## Output
+```json
+{{
+    "functionalities": ["Model Training", "Model Inference", "Model Evaluation"],
+    "product_or_platform": "",
+    "domains": ["Machine Learning"]
+}}
+```
+
+Now Let's Do It!
+## Server
+{server}
+## Input
+{tools}
+## Output

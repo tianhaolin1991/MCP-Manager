@@ -1,0 +1,56 @@
+# Instruction
+There is a tool manager whose input schema:
+{{
+    "category": "[The platform, software, or domain to which the tool belongs should be specified in priority order: platform first, then software, then domain, and set as UNKNOWN when information is unknown.]",
+    "query": "[A description of the tool used to query for tools]"
+}}
+Your task is to generate valid parameters based on the given information, ensuring that using these parameters can effectively obtain the target tool.
+
+# Roles:
+- **Category**:  Determined by integrating the tool's server, name, and description, indicating the platform, software, or domain it belongs to.
+- **Query**: Do not repeat the content in the tool description. Be more general.
+
+# Examples
+----- Example 1 -----
+## Tool
+{{"server": "MySQL Manager", "name": "query", "description": "Execute read-only MySQL queries against the connected database", "parameter": {{"sql": "(string): The SQL query to execute"}}}}
+## Parameters
+```json
+{{
+    "category": "MySQL",
+    "query": "Execute read-only queries on database"
+}}
+```
+----- Example 2 -----
+## Tool
+{{"server": "Image Processing Tools", "name": "blurImage", "description": "Add a blur effect to the image using the Gaussian algorithm.", "parameter": {{"image": "(string): image encoded with base64", "blurRadius": "(integer): blur radius value (e.g., 5-20)"}}}}
+## Parameters
+```json
+{{
+    "category": "Image Processing",
+    "query": "Apply blur effect to images"
+}}
+```
+----- Example 3 -----
+## Tool
+{{"server": "Gaode Maps", ""name": "weatherQuery", "description": "Inquire about the weather of a specific city", "parameter": {{"city": "(string): name of the city", "date": "date to query"}}}}
+## Parameters
+```json
+{{
+    "category": "Gaode Maps",
+    "query": "Query weather for a city"
+}}
+```
+----- Example 4 -----
+## name
+{{"server": "mcp-k8s-go", "name": "kubeAlertMonitor", "description": "Real-time monitoring of K8s cluster health status, identification of abnormal conditions", "parameter": {{"clusterName": "(string): name of the K8s cluster to be monitored", "alertLevel": "(string): alert level (e.g., warning, error, critical)"}}}}
+## Parameters
+{{
+    "category": "Kubernetes",
+    "query": "Monitor K8s cluster health status"
+}}
+
+Now generate a task with the tool below
+## name
+{tool}
+## Parameters

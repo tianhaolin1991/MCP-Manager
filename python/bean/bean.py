@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Union
 
 
 @dataclass
@@ -25,13 +25,19 @@ class ManagerTool:
     server: str
     description: str
     parameter: dict[str, str]
-    task: str = ""
+    task: Union[str, 'ToolQuery'] = ""
 
 
 @dataclass
 class Domain:
     name: str
     description: str
+
+@dataclass
+class ServerMetaData:
+    functionalities: List[str]
+    product_or_platform: str
+    domains: List[str]
 
 
 @dataclass
@@ -47,9 +53,26 @@ class ManagerServer:
                 return tool
         return None
 
+@dataclass
+class ManagerServerNew:
+    name: str
+    meta_data: ServerMetaData
+    tools: List[ManagerTool]
+
+    def tool(self, name: str):
+        for tool in self.tools:
+            if tool.name == name:
+                return tool
+        return None
 
 @dataclass
 class ManagerServerEmbeddings:
     name: str
     server: List[float]
     tools: List[List[float]]
+
+
+@dataclass
+class ToolQuery:
+    category: str
+    query: str
