@@ -21,7 +21,7 @@ from utils.file_util import read_jsonl_file, dataclass_to_json, append_jsonl_fil
 DOMAINS = [dataclass_to_json(domain) for domain in read_jsonl_file("data/domain/domain.jsonl", Domain)]
 
 MANAGER_SERVER_DICT = {server.name: server for server in
-                       read_jsonl_file("data/mcp-manager/manager_servers_old.jsonl", ManagerServer)}
+                       read_jsonl_file("data/mcp-manager/manager_servers.jsonl", ManagerServer)}
 
 
 class MCPServer(BaseModel):
@@ -36,10 +36,8 @@ class ToolSelectionResult:
     elapsed_time: float
     task: str
     is_correct: bool
-    target_server_name: str
-    target_tool_name: str
-    target_server_description: str
-    target_tool_description: str
+    target_server: ManagerServer
+    target_tool: ManagerTool
     match_result: ToolMatchResult
     sample_size: int
     position_index: int
@@ -96,20 +94,16 @@ def test_llm_retrieval(
         if is_correct:
             # 构建最终结果
             return ToolSelectionResult(pass_at_k=pass_at + 1, elapsed_time=elapsed_time,
-                                       # response=response.content.strip(),
                                        task=target_tool.task,
-                                       target_server_name=target_server.name,
-                                       target_server_description=target_server.description,
-                                       target_tool_name=target_tool.name,
-                                       target_tool_description=target_tool.description,
+                                       target_server=target_server,
+                                       target_tool=target_tool,
                                        match_result=match_result,
                                        sample_size=sample_size, position_index=position_index,
                                        selection_method=selection_method, is_correct=is_correct)
-    return ToolSelectionResult(pass_at_k=-1, elapsed_time=elapsed_time,  # response=response.content.strip(),
+    return ToolSelectionResult(pass_at_k=-1, elapsed_time=elapsed_time,
                                task=target_tool.task,
-                               target_server_name=target_server.name,
-                               target_server_description=target_server.description,
-                               target_tool_name=target_tool.name, target_tool_description=target_tool.description,
+                               target_server=target_server,
+                               target_tool=target_tool,
                                match_result=match_results[0],
                                sample_size=sample_size, position_index=position_index,
                                selection_method=selection_method, is_correct=False)
@@ -165,15 +159,12 @@ def run_grid_search(
     # 结果文件路径
     results_file = extract_output_file(output_path, pass_at_k, two_steps)
     if use_cache:
-        results = read_jsonl_file(results_file, ToolSelectionResult)
-        all_results.extend(results)
-        # TODO--缓存
+        cached_results = read_jsonl_file(results_file, ToolSelectionResult)
     else:
         if os.path.exists(results_file):
             os.remove(results_file)
-
-
-
+        cached_results = []
+    all_results.extend(cached_results)
     # 缓存已经采样的数据
     sampled_data_cache = {}
     # 初始化工具匹配器
@@ -181,9 +172,10 @@ def run_grid_search(
         tool_matcher = ToolMatcher(embedding_model=embedding_model, persist_directory=persist_directory)
     else:
         tool_matcher = ToolMatcher(embedding_model=embedding_model)
-    for (position_index, sample_size) in grid_points_list:
+    for i, (position_index, sample_size) in enumerate(grid_points_list):
         print(f"\n=== 处理样本: {position_index} / {sample_size} ===")
-
+        if use_cache and i < len(cached_results):
+            continue
         # 采样工具（或从缓存获取）
         if sample_size not in sampled_data_cache:
             sampled_data = sampler.sample_tools(sample_size)
@@ -204,7 +196,6 @@ def run_grid_search(
             pass_at_k=pass_at_k,
             two_steps=two_steps
         )
-
         # 添加到结果列表
         all_results.append(selection_result)
         append_jsonl_file(results_file, selection_result)
@@ -212,10 +203,11 @@ def run_grid_search(
         # 打印结果
         print(f"  结果: {'✓' if selection_result.is_correct else '✗'} "
               f"耗时: {selection_result.elapsed_time:.2f}秒")
-        print(f"  目标服务器: {selection_result.target_server_name}, 目标工具: {selection_result.target_tool_name}")
+        print(f"  目标服务器: {selection_result.target_server.name}, 目标工具: {selection_result.target_tool.name}")
         print(
             f"  匹配的服务器: {selection_result.match_result.server}, 匹配的工具: {selection_result.match_result.tool.name}")
-        print(f"  : {selection_result.task}")
+        print(f" Task : {selection_result.task}")
+        print(f" Rank : {selection_result.match_result.score}")
 
         # 等待一段时间，避免请求过于频繁
         if position_index != len(grid_points_list) - 1 or sample_size != len(grid_points_list) - 1:

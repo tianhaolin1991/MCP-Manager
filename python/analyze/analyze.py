@@ -12,7 +12,7 @@ results = read_jsonl_file("../data/eval/tool_manager/task/manager_grid_search_re
                           ToolSelectionResult)
 BAD_CASES = [sr for sr in results if not sr.is_correct]
 MANAGER_SERVER_DICT = {server.name: server for server in
-                       read_jsonl_file("../data/mcp-manager/manager_servers_old.jsonl", ManagerServer)}
+                       read_jsonl_file("../data/mcp-manager/manager_servers.jsonl", ManagerServer)}
 JUDGE_PROMPT = """Decide Which Tool Can Solve The Problem Below Better
 # Problem
 {problem}

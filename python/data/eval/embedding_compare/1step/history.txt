@@ -1,0 +1,8 @@
+TOP5
+general task desc
+总体正确率: 93.52%
+model-bge-m3:567m, avg_rank-1.3093333333333332, avg_score-0.8726737701098124, mismatch:26
+
+general task hard
+总体正确率: 89.95%
+model-bge-m3:567m, avg_rank-1.3036912751677852, avg_score-0.7896358361530224, mismatch:267

@@ -41,7 +41,7 @@ class ServerMetaData:
 
 
 @dataclass
-class ManagerServer:
+class ManagerServerOld:
     name: str
     description: str
     tools: List[ManagerTool]
@@ -54,7 +54,7 @@ class ManagerServer:
         return None
 
 @dataclass
-class ManagerServerNew:
+class ManagerServer:
     name: str
     meta_data: ServerMetaData
     tools: List[ManagerTool]
@@ -68,8 +68,8 @@ class ManagerServerNew:
 @dataclass
 class ManagerServerEmbeddings:
     name: str
-    server: List[float]
-    tools: List[List[float]]
+    server: dict[str, List[float]]
+    tools: dict[str, List[float]]
 
 
 @dataclass

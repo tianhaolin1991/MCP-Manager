@@ -20,7 +20,7 @@ class PydanticToolQuery(BaseModel):
 if __name__ == "__main__":
     SYSTEM_PROMPT = read_file("prompts/TASK_GENERATE_NEW.txt")
     servers = read_jsonl_file("data/mcp-manager/manager_servers_old.jsonl", ManagerServer)
-    output_file = "data/mcp-manager/manager_server_with_task.jsonl"
+    output_file = "data/mcp-manager/manager_server_with_task_0.jsonl"
     chat_model = ChatOpenAI(model=MODEL_NAME, api_key=API_KEY, base_url=BASE_URL)
     parser = PydanticOutputParser(pydantic_object=PydanticToolQuery)
     for server in servers:

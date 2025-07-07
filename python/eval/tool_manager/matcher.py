@@ -86,9 +86,17 @@ class ToolMatcher:
             tool_query = task["query"]
         else:
             raise Exception(f"UNKNOWN TASK {task}")
-        # server_docs = self.server_retriever.similarity_search_with_score(mcp_server.server, filter={'domain': mcp_server.domain}, k=5)
         if two_steps:
-            server_docs = self.server_retriever.similarity_search_with_relevance_scores(server_query, k=100)
+            server_docs = self.server_retriever.similarity_search_with_relevance_scores(server_query, k=200)
+            sdd = {}
+            for server_doc, server_score in server_docs:
+                if server_doc.metadata['name'] not in sdd:
+                    sdd[server_doc.metadata['name']] = (server_doc, server_score)
+                else:
+                    old_doc,old_score = sdd[server_doc.metadata['name']]
+                    if old_score < server_score:
+                        sdd[server_doc.metadata['name']] = (server_doc, server_score)
+            server_docs = list(sdd.values())
         else:
             server_docs = []
         # 使用ToolMatcher进行分层匹配
