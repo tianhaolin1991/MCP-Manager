@@ -12,9 +12,9 @@ Your task is to generate valid parameters based on the given information, ensuri
 
 # Examples
 ----- Example 1 -----
-## Tool
+## Input
 {{"server": "MySQL Manager", "name": "query", "description": "Execute read-only MySQL queries against the connected database", "parameter": {{"sql": "(string): The SQL query to execute"}}}}
-## Parameters
+## Output
 ```json
 {{
     "category": "MySQL",
@@ -22,9 +22,9 @@ Your task is to generate valid parameters based on the given information, ensuri
 }}
 ```
 ----- Example 2 -----
-## Tool
+## Input
 {{"server": "Image Processing Tools", "name": "blurImage", "description": "Add a blur effect to the image using the Gaussian algorithm.", "parameter": {{"image": "(string): image encoded with base64", "blurRadius": "(integer): blur radius value (e.g., 5-20)"}}}}
-## Parameters
+## Output
 ```json
 {{
     "category": "Image Processing",
@@ -32,9 +32,9 @@ Your task is to generate valid parameters based on the given information, ensuri
 }}
 ```
 ----- Example 3 -----
-## Tool
+## Input
 {{"server": "Gaode Maps", ""name": "weatherQuery", "description": "Inquire about the weather of a specific city", "parameter": {{"city": "(string): name of the city", "date": "date to query"}}}}
-## Parameters
+## Output
 ```json
 {{
     "category": "Gaode Maps",
@@ -42,15 +42,15 @@ Your task is to generate valid parameters based on the given information, ensuri
 }}
 ```
 ----- Example 4 -----
-## name
+## Input
 {{"server": "mcp-k8s-go", "name": "kubeAlertMonitor", "description": "Real-time monitoring of K8s cluster health status, identification of abnormal conditions", "parameter": {{"clusterName": "(string): name of the K8s cluster to be monitored", "alertLevel": "(string): alert level (e.g., warning, error, critical)"}}}}
-## Parameters
+## Output
 {{
     "category": "Kubernetes",
     "query": "Monitor K8s cluster health status"
 }}
 
 Now generate a task with the tool below
-## name
+## Input
 {tool}
-## Parameters
+## Output

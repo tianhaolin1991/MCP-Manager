@@ -1,0 +1,350 @@
+{
+    "mcp_pool": [
+        {
+            "name": "FireCrawl",
+            "description": "A Model Context Protocol (MCP) server implementation that integrates with Firecrawl for web scraping capabilities.",
+            "tools": [
+                {
+                    "tool_name": "firecrawl_search",
+                    "tool_description": "Search the web and optionally extract content from search results.",
+                    "inputs": [
+                        {
+                            "name": "query",
+                            "type": "string",
+                            "required": true,
+                            "description": "your search query"
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "npx -y firecrawl-mcp",
+                    "env": {
+                        "FIRECRAWL_API_KEY": "fc-7fe7a922665746b89e644b32a46d3040"
+                    },
+                    "args": "",
+                    "port": 8005
+                }
+            ]
+        },
+        {
+            "name": "DuckDuckGo Search Server",
+            "description": "Enable web search capabilities through DuckDuckGo. Fetch and parse webpage content intelligently for enhanced LLM interaction",
+            "tools": [
+                {
+                    "tool_name": "search",
+                    "tool_description": "Search DuckDuckGo and return formatted results.",
+                    "inputs": [
+                        {
+                            "name": "query",
+                            "type": "string",
+                            "required": true,
+                            "description": "your search query"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "fetch_content",
+                    "tool_description": "Fetch and parse content from a webpage URL.",
+                    "inputs": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "required": true,
+                            "description": "The webpage URL to fetch content from"
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "uvx duckduckgo-mcp-server",
+                    "port": 8006
+                }
+            ]
+        },
+        {
+            "name": "Fetch",
+            "description": "A Model Context Protocol server that provides web content fetching capabilities. This server enables LLMs to retrieve and process content from web pages, converting HTML to markdown for easier consumption.The fetch tool will truncate the response, but by using the start_index argument, you can specify where to start the content extraction. This lets models read a webpage in chunks, until they find the information they need.",
+            "tools": [
+                {
+                    "tool_name": "fetch",
+                    "tool_description": "Fetches a URL from the internet and extracts its contents as markdown.",
+                    "inputs": [
+                        {
+                            "name": "url",
+                            "type": "string",
+                            "required": true,
+                            "description": "URL to fetch"
+                        },
+                        {
+                            "name": "max_length",
+                            "type": "integer",
+                            "required": false,
+                            "description": "Maximum number of characters to return (default: 5000)"
+                        },
+                        {
+                            "name": "start_index",
+                            "type": "integer",
+                            "required": false,
+                            "description": " Start content from this character index (default: 0)"
+                        },
+                        {
+                            "name": "raw",
+                            "type": "boolean",
+                            "required": false,
+                            "description": "Get raw content without markdown conversion (default: false)"
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "uvx mcp-server-fetch",
+                    "port": 8007
+                }
+            ]
+        },
+        {
+            "name": "Desktop Commander",
+            "description": "Execute terminal commands and manage files with diff editing capabilities. Coding, shell and terminal, task automation",
+            "tools": [
+                {
+                    "tool_name": "execute_command",
+                    "tool_description": "Execute a terminal command with timeout. Command will continue runningin background if it doesn't complete within timeout.",
+                    "inputs": [
+                        {
+                            "name": "command",
+                            "type": "string",
+                            "required": true,
+                            "description": "commands in terminal"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "read_output",
+                    "tool_description": "Read new output from a running terminal session.",
+                    "inputs": [
+                        {
+                            "name": "output",
+                            "type": "string",
+                            "required": true,
+                            "description": "read output"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "force terminate",
+                    "tool_description": "Force terminate a running terminal session.",
+                    "inputs": [
+                        {
+                            "name": "terminal session",
+                            "type": "string",
+                            "required": true,
+                            "description": "run terminal session"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "list sessions",
+                    "tool_description": "List all active terminal sessions",
+                    "inputs": [
+                        {
+                            "name": "sessions",
+                            "type": "list",
+                            "required": true,
+                            "description": "active terminal sessions"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "kill_process",
+                    "tool_description": "Terminate a running process by PlD. Use with caution as this will forcefullyterminate the specified process.",
+                    "inputs": [
+                        {
+                            "name": "processes",
+                            "type": "string",
+                            "required": true,
+                            "description": "Terminate a running process"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "block_command",
+                    "tool_description": "Add a command to the blacklist. Once blocked, the command cannot be executed until unblocked.",
+                    "inputs": [
+                        {
+                            "name": "block command",
+                            "type": "string",
+                            "required": true,
+                            "description": "Add a command to the blacklist"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "unblock_command",
+                    "tool_description": "Remove a command from the blacklist. Once unblocked, the command can be executed normally.",
+                    "inputs": [
+                        {
+                            "name": "unblock command",
+                            "type": "string",
+                            "required": true,
+                            "description": "Remove a command from the blacklist"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "list blocked_commands",
+                    "tool_description": "List all currently blocked commands.",
+                    "inputs": [
+                        {
+                            "name": "blocked_commands",
+                            "type": "string",
+                            "required": true,
+                            "description": "List all currently blocked commands."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "read_file",
+                    "tool_description": "Read the complete contents of a file from the file system. Handles various text encodings and provides detailed error messages if the file cannot beread.Only works within allowed directories.",
+                    "inputs": [
+                        {
+                            "name": "file system",
+                            "type": "string",
+                            "required": true,
+                            "description": "Read the complete contents of a file from the file system"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "read_multiple_files",
+                    "tool_description": "Read the contents of multiple files simultaneously. Each file's content isreturned with its path as a reference. Failed reads for individual files won'tstop the entire operation. Only works within allowed directories.",
+                    "inputs": [
+                        {
+                            "name": "file system",
+                            "type": "string",
+                            "required": true,
+                            "description": "Read the contents of multiple files simultaneously."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "write_file",
+                    "tool_description": "Completely replace file contents. Best for large changes (>20% of file) orwhen edit_block fails.Use with caution as it will overwrite existing files.Only works within allowed directories.",
+                    "inputs": [
+                        {
+                            "name": "file system",
+                            "type": "string",
+                            "required": true,
+                            "description": "Completely replace file contents."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "create_directory",
+                    "tool_description": "Create a new directory or ensure a directory exists. Can create multiple nested directories in one operation. Only works within allowed directories.",
+                    "inputs": [
+                        {
+                            "name": "directory name",
+                            "type": "string",
+                            "required": true,
+                            "description": "Create a new directory or ensure a directory exists"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "list_directory",
+                    "tool_description": "Get a detailed listing of all files and directories in a specified path. Resultsdistinguish between files and directories with [FlLE] and [DlR] prefixes.Only works within allowed directories.",
+                    "inputs": [
+                        {
+                            "name": "path",
+                            "type": "string",
+                            "required": true,
+                            "description": "Get a detailed listing of all files and directories in a specified path"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "move_file",
+                    "tool_description": "Move or rename files and directories. Can move files between directories and rename them in a single operation.Both source and destination must be within allowed directories.",
+                    "inputs": [
+                        {
+                            "name": "file name",
+                            "type": "string",
+                            "required": true,
+                            "description": "Move or rename files and directories."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "search_files",
+                    "tool_description": "Recursively search for files and directories matching a pattern. Searches through all subdirectories from the starting path. Only searches within allowed directories.",
+                    "inputs": [
+                        {
+                            "name": "file name",
+                            "type": "string",
+                            "required": true,
+                            "description": "Recursively search for files and directories matching a pattern"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "search_code",
+                    "tool_description": "Search for text/code patterns within file contents using ripgrep. Fast andpowerful search similar to VS Code search functionality. Supports regularexpressions, file pattern filtering, and context lines. Only searches withinallowed directories.",
+                    "inputs": [
+                        {
+                            "name": "text/code patterns",
+                            "type": "string",
+                            "required": true,
+                            "description": "Search for text/code patterns within file contents using ripgrep."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "get_file_info",
+                    "tool_description": "Retrieve detailed metadata about a file or directory including size, creation time, last modified time permissions, and type. Only works within allowed directories.",
+                    "inputs": [
+                        {
+                            "name": "file name",
+                            "type": "string",
+                            "required": true,
+                            "description": "Retrieve detailed metadata about a file or directory"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "list_allowed directories",
+                    "tool_description": "Returns the list of directories that this server is allowed to access.",
+                    "inputs": [
+                        {
+                            "name": "query",
+                            "type": "string",
+                            "required": true,
+                            "description": "Returns the list of directories that this server is allowed to access."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "edit_block",
+                    "tool_description": "Apply surgical text replacements to files. Best for small changes (<20% offile size). Multiple blocks can be used for separate changes. Will verifychanges after application. Format: filepath, then <<<<<<< SEARCHcontent to find,=======,new content, >>>>>>> REPLACE.",
+                    "inputs": [
+                        {
+                            "name": "file name",
+                            "type": "string",
+                            "required": true,
+                            "description": "Apply surgical text replacements to files."
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "npx -y @smithery/cli@latest run exa --key 6e167d76-89cd-477d-a51f-8efc782d2292",
+                    "port": 8008
+                }
+            ]
+        }
+    ]
+}

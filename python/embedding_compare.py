@@ -46,7 +46,7 @@ def chroma_build_index(embedding_cache, chroma_persist, mcp_servers):
 
 def main(type: str,two_steps:bool,pass_at_k=5):
     compare_output_dir = f'{PROJECT_PATH}//data//eval//embedding_compare'
-    server_path = f"{PROJECT_PATH}//data//mcp-manager//manager_server_with_task_hard.jsonl"
+    server_path = f"{PROJECT_PATH}//data//mcp-manager//manager_server_with_task.jsonl"
     mcp_servers = read_jsonl_file(server_path, ManagerServer)
     for i, embedding_model in enumerate(models):
         chroma_persist = f'{PROJECT_PATH}//{DB_TYPE}'

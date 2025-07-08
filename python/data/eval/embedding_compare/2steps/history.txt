@@ -4,3 +4,8 @@ model-bge-m3:567m, avg_rank-1.1236842105263158, avg_score-0.8212306283239437, mi
 
 总体正确率: 93.90%
 model-bge-m3:567m, avg_rank-1.1848131779831257, avg_score-0.7374199774073629, mismatch:162
+
+TOP1
+general task hard
+总体正确率: 83.96%
+model-bge-m3:567m, avg_rank-1.002247191011236, avg_score-0.7538639115644518, mismatch:426

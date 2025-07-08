@@ -111,7 +111,7 @@ class ToolMatcher:
 
         matched_servers = {server['name']: server for server in server_scores}
 
-        tool_docs = self.tool_retriever.similarity_search_with_relevance_scores(tool_query, k=100)
+        tool_docs = self.tool_retriever.similarity_search_with_relevance_scores(tool_query, k=500)
         tool_scores = []
         for tool_rank, (tool_doc, tool_score) in enumerate(tool_docs):
             tool = from_dict(ManagerTool, json.loads(tool_doc.metadata["info"]))

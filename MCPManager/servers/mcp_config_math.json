@@ -1,0 +1,400 @@
+{
+    "mcp_pool": [
+        {
+            "name": "Math-MCP",
+            "description": "A Model Context Protocol (MCP) server that provides basic mathematical and statistical functions to Large Language Models (LLMs). This server enables LLMs to perform accurate numerical calculations through a simple API.",
+            "tools": [
+                {
+                    "tool_name": "add",
+                    "tool_description": "Adds two numbers together",
+                    "inputs": [
+                        {
+                            "name": "firstNumber",
+                            "type": "number",
+                            "required": true,
+                            "description": "The first addend"
+                        },
+                        {
+                            "name": "secondNumber",
+                            "type": "number",
+                            "required": true,
+                            "description": "The second addend"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "subtract",
+                    "tool_description": "Subtracts the second number from the first number",
+                    "inputs": [
+                        {
+                            "name": "minuend",
+                            "type": "number",
+                            "required": true,
+                            "description": "The number to subtract from"
+                        },
+                        {
+                            "name": "subtrahend",
+                            "type": "number",
+                            "required": true,
+                            "description": "The number being subtracted"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "multiply",
+                    "tool_description": "Multiplies two numbers together",
+                    "inputs": [
+                        {
+                            "name": "firstFactor",
+                            "type": "number",
+                            "required": true,
+                            "description": "The first factor"
+                        },
+                        {
+                            "name": "secondFactor",
+                            "type": "number",
+                            "required": true,
+                            "description": "The second factor"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "division",
+                    "tool_description": "Divides the first number by the second number",
+                    "inputs": [
+                        {
+                            "name": "numerator",
+                            "type": "number",
+                            "required": true,
+                            "description": "The number being divided"
+                        },
+                        {
+                            "name": "denominator",
+                            "type": "number",
+                            "required": true,
+                            "description": "The number to divide by"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "sum",
+                    "tool_description": "Adds any number of numbers together",
+                    "inputs": [
+                        {
+                            "name": "numbers",
+                            "type": "array",
+                            "required": true,
+                            "description": "Array of numbers to sum"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "average",
+                    "tool_description": "Calculates the arithmetic mean of a list of numbers",
+                    "inputs": [
+                        {
+                            "name": "numbers",
+                            "type": "array",
+                            "required": true,
+                            "description": "Array of numbers to find the average of"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "min",
+                    "tool_description": "Finds the minimum value from a list of numbers",
+                    "inputs": [
+                        {
+                            "name": "numbers",
+                            "type": "array",
+                            "required": true,
+                            "description": "Array of numbers to find the minimum of"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "max",
+                    "tool_description": "Finds the maximum value from a list of numbers",
+                    "inputs": [
+                        {
+                            "name": "numbers",
+                            "type": "array",
+                            "required": true,
+                            "description": "Array of numbers to find the maximum of"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "floor",
+                    "tool_description": "Rounds a number down to the nearest integer",
+                    "inputs": [
+                        {
+                            "name": "value",
+                            "type": "number",
+                            "required": true,
+                            "description": "The number to round down"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "ceiling",
+                    "tool_description": "Rounds a number up to the nearest integer",
+                    "inputs": [
+                        {
+                            "name": "value",
+                            "type": "number",
+                            "required": true,
+                            "description": "The number to round up"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "round",
+                    "tool_description": "Rounds a number to the nearest integer",
+                    "inputs": [
+                        {
+                            "name": "value",
+                            "type": "number",
+                            "required": true,
+                            "description": "The number to round"
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "node E:\\github\\mcp_local\\math-mcp-main\\build\\index.js",
+                    "port": 8006
+                }
+            ]
+        },
+        {
+            "name": "calculator-mcp-server",
+            "description": "This is a Model Context Protocol (MCP) server that provides LLMs with advanced athematical calculation capabilities, including symbolic math, statistical analysis, and matrix operations.",
+            "tools": [
+                {
+                    "tool_name": "calculate",
+                    "tool_description": "Evaluates a mathematical expression and returns the result",
+                    "inputs": [
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "required": true,
+                            "description": "The mathematical expression to evaluate (e.g. '2 + 2', 'sin(pi/4)', 'sqrt(16) * 2')"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "solve_equation",
+                    "tool_description": "Solves an algebraic equation for x and returns all solutions",
+                    "inputs": [
+                        {
+                            "name": "equation",
+                            "type": "string",
+                            "required": true,
+                            "description": "The equation to solve in format '<left side> = <right side>' (e.g. 'x**2 - 5*x + 6 = 0')"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "differentiate",
+                    "tool_description": "Computes the derivative of a mathematical expression with respect to a variable",
+                    "inputs": [
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "required": true,
+                            "description": "The mathematical expression to differentiate (e.g. 'x**2', 'sin(x)')"
+                        },
+                        {
+                            "name": "variable",
+                            "type": "string",
+                            "required": false,
+                            "description": "The variable with respect to which to differentiate (default is 'x')"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "integrate",
+                    "tool_description": "Computes the indefinite integral of a mathematical expression with respect to a variable",
+                    "inputs": [
+                        {
+                            "name": "expression",
+                            "type": "string",
+                            "required": true,
+                            "description": "The mathematical expression to integrate (e.g. 'x**2', 'sin(x)')"
+                        },
+                        {
+                            "name": "variable",
+                            "type": "string",
+                            "required": false,
+                            "description": "The variable with respect to which to integrate (default is 'x')"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "mean",
+                    "tool_description": "Computes the mean of a list of numbers",
+                    "inputs": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "required": true,
+                            "description": "A list of numerical values"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "variance",
+                    "tool_description": "Computes the variance of a list of numbers",
+                    "inputs": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "required": true,
+                            "description": "A list of numerical values"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "standard_deviation",
+                    "tool_description": "Computes the standard deviation of a list of numbers",
+                    "inputs": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "required": true,
+                            "description": "A list of numerical values"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "median",
+                    "tool_description": "Computes the median of a list of numbers",
+                    "inputs": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "required": true,
+                            "description": "A list of numerical values"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "mode",
+                    "tool_description": "Computes the mode of a list of numbers",
+                    "inputs": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "required": true,
+                            "description": "A list of numerical values"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "correlation_coefficient",
+                    "tool_description": "Computes the Pearson correlation coefficient between two lists of numbers",
+                    "inputs": [
+                        {
+                            "name": "data_x",
+                            "type": "array",
+                            "required": true,
+                            "description": "The first list of numerical values"
+                        },
+                        {
+                            "name": "data_y",
+                            "type": "array",
+                            "required": true,
+                            "description": "The second list of numerical values"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "linear_regression",
+                    "tool_description": "Performs linear regression on a set of points and returns the slope and intercept",
+                    "inputs": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "required": true,
+                            "description": "A list of tuples, where each tuple contains (x, y) coordinates"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "confidence_interval",
+                    "tool_description": "Computes the confidence interval for the mean of a dataset",
+                    "inputs": [
+                        {
+                            "name": "data",
+                            "type": "array",
+                            "required": true,
+                            "description": "A list of numerical values"
+                        },
+                        {
+                            "name": "confidence",
+                            "type": "number",
+                            "required": false,
+                            "description": "The confidence level (default is 0.95)"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "matrix_addition",
+                    "tool_description": "Adds two matrices",
+                    "inputs": [
+                        {
+                            "name": "matrix_a",
+                            "type": "array",
+                            "required": true,
+                            "description": "The first matrix as a list of lists"
+                        },
+                        {
+                            "name": "matrix_b",
+                            "type": "array",
+                            "required": true,
+                            "description": "The second matrix as a list of lists"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "matrix_multiplication",
+                    "tool_description": "Multiplies two matrices",
+                    "inputs": [
+                        {
+                            "name": "matrix_a",
+                            "type": "array",
+                            "required": true,
+                            "description": "The first matrix as a list of lists"
+                        },
+                        {
+                            "name": "matrix_b",
+                            "type": "array",
+                            "required": true,
+                            "description": "The second matrix as a list of lists"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "matrix_transpose",
+                    "tool_description": "Transposes a matrix",
+                    "inputs": [
+                        {
+                            "name": "matrix",
+                            "type": "array",
+                            "required": true,
+                            "description": "The matrix to transpose as a list of lists"
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "uv --directory E:\\github\\mcp_local\\calculator-mcp-server run calculator_server.py",
+                    "port": 8007
+                }
+            ]
+        }
+    ]
+}

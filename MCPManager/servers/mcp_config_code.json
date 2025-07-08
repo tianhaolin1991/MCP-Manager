@@ -1,0 +1,238 @@
+{
+    "mcp_pool": [
+        {
+            "name": "Context7",
+            "description": "Fetch up-to-date, version-specific documentation and code examples directly into your prompts. Enhance your coding experience by eliminating outdated information and hallucinated APIs. Simply add `use context7` to your questions for accurate and relevant answers.",
+            "tools": [
+                {
+                    "tool_name": "resolve-library-id",
+                    "tool_description": "Required first step: Resolves a general package name into a Context7-compatible library lD. Must be called before using 'get-library-docs' to retrieve a valid Context7-compatible library ID",
+                    "inputs": [
+                        {
+                            "name": "package name",
+                            "type": "string",
+                            "required": true,
+                            "description": "Required first step: Resolves a general package name into a Context7-compatible library lD."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "get-library-docs",
+                    "tool_description": "Fetches up-to-date documentation for a library. You must call 'resolve-library-id' first to obtain the exact Context7-compatible library ID required to use this tool.",
+                    "inputs": [
+                        {
+                            "name": "documentation",
+                            "type": "number",
+                            "required": true,
+                            "description": "Fetches up-to-date documentation for a library."
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "cmd",
+                                "args": [
+                                    "/c",
+                                    "npx",
+                                    "-y",
+                                    "@smithery/cli@latest",
+                                    "run",
+                                    "@upstash/context7-mcp",
+                                    "--key",
+                                    "[YOUR_KEY]"
+                                ],
+                    "port": 8011
+                }
+            ]
+        },
+        {
+            "name": "TaskManager",
+            "description": "Model Context Protocol server for Task Management, allowing Claude Desktop (or any MCP client) to manage and execute tasks in a queue-based system.",
+            "tools": [
+                {
+                    "tool_name": "request_planning ",
+                    "tool_description": "Register a new user request and plan its associated tasks. You must provide 'originalRequest' and 'tasks', and optionally 'splitDetails'.",
+                    "inputs": [
+                        {
+                            "name": "tasks",
+                            "type": "string",
+                            "required": true,
+                            "description": "Register a new user request and plan its associated tasks."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "get_next_task",
+                    "tool_description": "Given a 'requestld', return the next pending task (not done yet). lf all tasksare completed, it will indicate that no more tasks are left and that you mustwait for the request completion approval.",
+                    "inputs": [
+                        {
+                            "name": "requestld",
+                            "type": "number",
+                            "required": true,
+                            "description": "Given a 'requestld', return the next pending task (not done yet)."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "mark_task_done",
+                    "tool_description": "Mark a given task as done after you've completed it. Provide 'requestld'and 'taskld', and optionally 'completedDetails'",
+                    "inputs": [
+                        {
+                            "name": "given task",
+                            "type": "string",
+                            "required": true,
+                            "description": "Mark a given task as done after you've completed it."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "approve_task_completion ",
+                    "tool_description": "Once the assistant has marked a task as done using 'mark_task_done', theuser must call this tool to approve that the task is genuinely completed.Only after this approval can you proceed to 'get_next_task' to move on.",
+                    "inputs": [
+                        {
+                            "name": "given task",
+                            "type": "string",
+                            "required": true,
+                            "description": "Once the assistant has marked a task as done using 'mark_task_done'"
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "approve_request_completion ",
+                    "tool_description": "After all tasks are done and approved, this tool finalizes the entire request. The user must call this to confirm that the request is fully completed.",
+                    "inputs": [
+                        {
+                            "name": "request",
+                            "type": "string",
+                            "required": true,
+                            "description": "After all tasks are done and approved, this tool finalizes the entire request."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "open_task_details  ",
+                    "tool_description": "Get details of a specific task by 'taskid'. This is for inspecting taskinformation at any point.",
+                    "inputs": [
+                        {
+                            "name": "taskid",
+                            "type": "string",
+                            "required": true,
+                            "description": "Get details of a specific task by 'taskid'."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "list_requests",
+                    "tool_description": "List all requests with their basic information and summary of tasks. Thisprovides a quick overview of all requests in the system.",
+                    "inputs": [
+                        {
+                            "name": "requests",
+                            "type": "string",
+                            "required": true,
+                            "description": "List all requests with their basic information and summary of tasks."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "add_tasks_to_request",
+                    "tool_description": "Add new tasks to an existing request. This allows extending a request with additional tasks.",
+                    "inputs": [
+                        {
+                            "name": "tasks",
+                            "type": "string",
+                            "required": true,
+                            "description": "Add new tasks to an existing request."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "update_task",
+                    "tool_description": "Update an existing task's title and/or description. Only uncompleted tasks can be updated.",
+                    "inputs": [
+                        {
+                            "name": "tasks",
+                            "type": "string",
+                            "required": true,
+                            "description": "Update an existing task's title and/or description."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "delete_task ",
+                    "tool_description": "Delete a specific task from a request. Only uncompleted tasks can be deleted.",
+                    "inputs": [
+                        {
+                            "name": "tasks",
+                            "type": "string",
+                            "required": true,
+                            "description": "Delete a specific task from a request."
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "cmd",
+                                "args": [
+                                    "/c",
+                                    "npx",
+                                    "-y",
+                                    "@smithery/cli@latest",
+                                    "run",
+                                    "@upstash/context7-mcp",
+                                    "--key",
+                                    "[YOUR_KEY]"
+                                ],
+                    "port": 8012
+                }
+            ]
+        },
+        {
+            "name": "Code Review Server",
+            "description": "Analyze your codebases efficiently with structured reviews and actionable insights. Leverage the power of Large Language Models to identify issues and improve code quality. Simplify your code review process with automated analysis and recommendations tailored to your needs.",
+            "tools": [
+                {
+                    "tool_name": "analyze_repo",
+                    "tool_description": "Use this tool when you need to analyze a code repository structure withoutperforming a detailed review. This tool flattens the repository into a textualrepresentation and is ideal for getting a high-level overview of codeorganization, directory structure, and file contents. Use it beforecode_review when you need to understand the codebase structure first, orwhen a full code review is not needed.",
+                    "inputs": [
+                        {
+                            "name": "repo name",
+                            "type": "string",
+                            "required": true,
+                            "description": "Use this tool when you need to analyze a code repository structure withoutperforming a detailed review."
+                        }
+                    ]
+                },
+                {
+                    "tool_name": "code_review ",
+                    "tool_description": "Use this tool when you need a comprehensive code review with specificfeedback on code quality,security issues, performance problems, andmaintainability concerns. This tool performs in-depth analysis on arepository or specific files and returns structured results including issuesfound, their severity, recommendations for fixes, and overall strengths ofthe codebase. Use it when you need actionable insights to improve codequality or when evaluating a codebase for potential problems.",
+                    "inputs": [
+                        {
+                            "name": "documentation",
+                            "type": "string",
+                            "required": true,
+                            "description": "Use this tool when you need a comprehensive code review with specificfeedback on code quality,security issues, performance problems, andmaintainability concerns."
+                        }
+                    ]
+                }
+            ],
+            "run_config": [
+                {
+                    "command": "cmd",
+                                "args": [
+                                    "/c",
+                                    "npx",
+                                    "-y",
+                                    "@smithery/cli@latest",
+                                    "run",
+                                    "@crazyrabbitLTC/mcp-code-review-server",
+                                    "--key",
+                                    "[YOUR_KEY]"
+                                ],
+                    "port": 8013
+                }
+            ]
+        }
+    ]
+}
