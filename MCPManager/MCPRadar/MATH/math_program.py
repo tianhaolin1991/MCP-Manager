@@ -8,7 +8,7 @@ from mcp_program import MCPPredict
 
 
 class MathPredict(MCPPredict):
-    def __init__(self, max_steps=5, prompt_template=REACT_PROMPT.strip(), task_name="math"):
+    def __init__(self, max_steps=20, prompt_template=REACT_PROMPT.strip(), task_name="math"):
         super().__init__(max_steps, prompt_template, task_name)
 
     def evaluate_prediction(self, question: str, ground_truth: str, prediction: str, record: LLMCallRecord):

@@ -1,15 +1,10 @@
-# teamwork_mcp/synced_mcp_client.py
 import asyncio
 import atexit
 import logging
 import pickle
-from multiprocessing import Process, Queue, Lock
+from multiprocessing import Process, Queue
 from typing import Any, Tuple, Dict
 from utils.async_mcp_client import AsyncMCPClient
-# 全局客户端实例和锁，确保全局唯一的客户端实例
-_CLIENT_INSTANCE = None
-_CLIENT_LOCK = Lock()
-
 
 class SyncedMcpClient(Process):
     """
@@ -28,10 +23,17 @@ class SyncedMcpClient(Process):
         self.response_queue = Queue()
         self.is_running = False
         self.daemon = True
+        self.async_client = None
         atexit.register(self.cleanup)
-
-        # begin new process
         self.start()
+        # begin new process
+
+    async def lazy_connect(self):
+        if self.async_client:
+            return
+        self.async_client = AsyncMCPClient()
+        await self.async_client.connect_to_sse_server(server_url=self.server_url)
+        print("connected to sse server {} success".format(self.server_url))
 
     def run(self):
         """
@@ -44,19 +46,16 @@ class SyncedMcpClient(Process):
         """
         Runs the AsyncMCPClient and handles communication with the main process.
         """
-
-        client = AsyncMCPClient()
-        await client.connect_to_sse_server(server_url=self.server_url)
-
         try:
             while self.is_running:
                 if not self.request_queue.empty():
+                    await self.lazy_connect()
                     request = self.request_queue.get()
                     if request == 'terminate':
                         break
                     try:
                         func_name, args, kwargs = pickle.loads(request)
-                        func = getattr(client, func_name)
+                        func = getattr(self.async_client, func_name)
                         result = await func(*args, **kwargs)
                         self.response_queue.put(pickle.dumps(('success', result)))
                     except Exception as e:
@@ -64,11 +63,7 @@ class SyncedMcpClient(Process):
                 await asyncio.sleep(0.01)
 
         except Exception as e:
-            self.httpx_logger.exception(e)
             self.response_queue.put(pickle.dumps(('error', f"Client initialization error: {str(e)}")))
-
-        finally:
-            await client.cleanup()
 
     def _send_request(self, func_name: str, args: Tuple = (), kwargs: Dict = None) -> Any:
         """

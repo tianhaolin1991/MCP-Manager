@@ -11,7 +11,7 @@ SYSTEM_PROMPT = """# Role
 You are a helpful assistant. You are able to answer questions using different tools."""
 
 class GAIAPredict(MCPPredict):
-    def __init__(self, max_steps=5, prompt_template=(REACT_PROMPT + SYSTEM_PROMPT).strip(), task_name="gaia"):
+    def __init__(self, max_steps=20, prompt_template=(REACT_PROMPT + SYSTEM_PROMPT).strip(), task_name="gaia"):
         super().__init__(max_steps, prompt_template, task_name)
 
     def evaluate_prediction(self, question: str, ground_truth: str, prediction: str, record: LLMCallRecord):

@@ -5,7 +5,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 from cons.constants import *
 from cons.log import LOGGER
 from process.models import *
-from utils.file_util import read_json_file, from_dict, read_jsonl_file, append_jsonl_file
+from utils.file_util import read_json_file, read_jsonl_file, append_jsonl_file
 from utils.synced_mcp_client import SyncedMcpClient
 
 
@@ -67,13 +67,14 @@ class MCPExecutor:
             logger.error(f"NO TOOLS FOUND FROM, {content}")
             return ""
         server = self.mcp_pool.get_server(tool_desc['server'])
+        mcp_cli = server.client
         tool_name = tool_desc['name']
         print(f"Execute Tool\nServer:{server.name}\nTool:{tool_name}\nArgs:{tool_desc['arguments']}")
-        result = server.client.call_tool(tool_name, tool_desc['arguments'])
+        result = mcp_cli.call_tool(tool_name, tool_desc['arguments'])
         texts = [item.text for item in result.content]
         result_str_segment = ''.join(texts)
         logger.info(f"Execute Tool: {server.name}-{tool_name}, results:{result_str_segment}")
-        return f'{Tag.OBSERVATION}{result_str_segment[0:self.max_token]}{Tag.OBSERVATION.close}'
+        return f'{Tag.OBSERVATION.start}{result_str_segment[0:self.max_token]}{Tag.OBSERVATION.close}'
 
 
 if __name__ == '__main__':
@@ -90,12 +91,13 @@ if __name__ == '__main__':
     #    print(response)
 
     response = executor.call("""```json
-    { 
-      "server": "DuckDuckGo Search Server",
-      "name": "search",
-      "arguments": {
-        "query": "Hot News"
-     }
+    {
+    "server": "DuckDuckGo Search Server",
+    "name": "search",
+    "arguments": {
+        "query": "USGS nonnative clownfish sightings before 2020 zip codes",
+        "max_results": 5
     }
+}
     ```""", LOGGER)
     print(response)

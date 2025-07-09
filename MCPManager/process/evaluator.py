@@ -64,6 +64,6 @@ class Evaluator:
         return is_correct  # Return the boolean result
 
     @staticmethod
-    def mcp_metric(pred: dspy.Prediction):
+    def mcp_metric(example:dspy.Example, pred: dspy.Prediction):
         return pred.success
 

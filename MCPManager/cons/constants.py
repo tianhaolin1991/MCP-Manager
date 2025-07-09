@@ -22,12 +22,16 @@ class Tag(Enum):
     def close(self):
         return self.value.replace('[', '[/')
 
+    @property
+    def start(self):
+        return self.value
+
     def extract(self, text: str) -> (str, str):
         """
         return text_in_tag, text_with_tag
         """
 
-        start_tag = self.value
+        start_tag = self.start
         close_tag = self.close
         start_pos = text.rfind(start_tag)
         if start_pos != -1:

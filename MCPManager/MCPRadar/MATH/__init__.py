@@ -44,7 +44,7 @@ Question: What is the determinant of matrix [[4, 7], [2, 6]]?
 """
 def get_mcp_sample_benchmark():
     mcp_sample_baseline = MathPredict(
-                                max_steps=5, 
+                                max_steps=20, 
                                 prompt_template=(REACT_PROMPT+SYSTEM_PROMPT).strip(),
                                 task_name="math")
     

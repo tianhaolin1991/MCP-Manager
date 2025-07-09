@@ -29,15 +29,7 @@ class AsyncMCPClient:
         self._session_context = ClientSession(*streams)
         self.session: ClientSession = await self._session_context.__aenter__()
 
-        # Initialize
         await self.session.initialize()
-
-        # List available tools to verify connection
-        # print("Initialized SSE client...")
-        # print("Listing tools...")
-        response = await self.session.list_tools()
-        tools = response.tools
-        # print("\nConnected to server with tools:", [tool.name for tool in tools])
 
     async def cleanup(self):
         """Properly clean up the session and streams"""

@@ -7,7 +7,7 @@ SYSTEM_PROMPT = """# Role
 You are a helpful assistant. You are able to answer questions using different tools. """
 def get_mcp_sample_benchmark():
     mcp_sample_baseline = CodingPredict(
-        max_steps=5,
+        max_steps=20,
         prompt_template=(REACT_PROMPT + SYSTEM_PROMPT).strip(),
         task_name="gaia")
     

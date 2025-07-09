@@ -48,7 +48,7 @@ class MCPProgram():
         LOGGER.info(json.dumps(log_entry, ensure_ascii=False))
 
 class MCPPredict(MCPProgram):
-    def __init__(self, max_steps=5, prompt_template=(REACT_PROMPT + SYSTEM_PROMPT).strip(),
+    def __init__(self, max_steps=20, prompt_template=(REACT_PROMPT + SYSTEM_PROMPT).strip(),
                  task_name="mcp_sample"):
         super().__init__()
         self.prompt_template = prompt_template
@@ -108,10 +108,10 @@ class MCPPredict(MCPProgram):
                     messages.append(message)
                     observation = self.executor.call(message[CONTENT], LOGGER)
                     messages.append({ROLE: Role.USER, CONTENT: observation})
+                    steps += 1
                 if tag == Tag.ANSWER:
                     messages.append(message)
                     break
-            steps += 1
 
         end_time = time.time()
 
