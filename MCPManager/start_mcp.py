@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 import json
@@ -6,6 +7,8 @@ import time
 import socket
 import threading
 from typing import List, Dict, Optional
+
+from cons.constants import WORK_DIR
 
 
 def check_port(port: int, timeout: int = 10) -> bool:
@@ -18,14 +21,15 @@ def check_port(port: int, timeout: int = 10) -> bool:
             time.sleep(0.5)  # 等待后重试
     return False
 
-
 def log_watcher(proc: subprocess.Popen, name: str, prefix: str):
     if proc.stdout:
         for line in iter(proc.stdout.readline, ''):
-            print(f"[{name}][{prefix}] {line.strip()}")
+            if line.strip():
+                print(f"[{name}][{prefix}] {line.strip()}")
     if proc.stderr:
         for line in iter(proc.stderr.readline, ''):
-            print(f"[{name}][{prefix}][ERROR] {line.strip()}")
+            if line.strip():
+                print(f"[{name}][{prefix}][ERROR] {line.strip()}")
 
 
 def main(config_file):
@@ -46,20 +50,16 @@ def main(config_file):
         print("mcp_pool 中未定义服务器。")
         sys.exit(1)
 
-    # 存储启动的进程和相关信息
     server_processes = []
 
-    # 遍历 mcp_pool 启动服务器
     for server in mcp_pool:
         name: str = server.get('name', '未知服务器')
         url: Optional[str] = server.get('url')
 
         if url:
-            # 存在 URL 时跳过启动命令
             print(f"服务器 '{name}' 已配置 URL: {url}，跳过运行命令。")
             continue
 
-        # 提取 run_config 中的参数
         run_configs: List[Dict] = server.get('run_config', [])
         command = None
         args = None
@@ -78,8 +78,9 @@ def main(config_file):
 
         # 校验必要参数
         if not all([command, port]):
-            print(f"服务器 '{name}' 配置不完整（缺少 command 或 port），跳过启动。")
-            continue
+            error = f"服务器 '{name}' 配置不完整（缺少 command 或 port），启动失败。"
+            print(error)
+            raise Exception(error)
 
         # 提取工具名称
         tools: List[Dict] = server.get('tools', [])
@@ -110,14 +111,15 @@ def main(config_file):
         print(f"环境变量: {env}")
 
         try:
-            # 启动进程并捕获输出
+            # 启动进程（指定 UTF-8 编码，忽略解码错误）
             proc = subprocess.Popen(
                 cmd_args,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 env=sub_env,
                 bufsize=1,
-                universal_newlines=True
+                encoding='utf-8',  # 指定编码为 UTF-8
+                errors='replace'   # 替换无法解码的字符（避免崩溃）
             )
 
             # 启动日志监控线程
@@ -128,8 +130,8 @@ def main(config_file):
             stdout_thread.start()
             stderr_thread.start()
 
-            # 检查端口是否可访问
-            print(f"正在检查端口 {port} 是否可访问...")
+            # 检查端口
+            print(f"检查端口 {port} 是否可访问...")
             if check_port(port):
                 print(f"服务器 '{name}' 已成功启动并监听端口 {port}")
             else:
@@ -146,7 +148,6 @@ def main(config_file):
         except Exception as e:
             print(f"启动服务器 '{name}' 失败: {e}")
 
-    # 等待所有后台进程结束
     if server_processes:
         print("按 Ctrl+C 停止所有服务器...")
         try:
@@ -155,7 +156,7 @@ def main(config_file):
         except KeyboardInterrupt:
             print("\n接收到停止信号，正在关闭所有服务器...")
             for info in server_processes:
-                if info['process'].poll() is None:  # 进程仍在运行
+                if info['process'].poll() is None:
                     info['process'].terminate()
                     try:
                         info['process'].wait(timeout=5)
@@ -166,9 +167,13 @@ def main(config_file):
         finally:
             print("所有服务器进程已退出")
 
-
+"""
+START:
+python start_mcp.py --name=GAIA
+"""
 if __name__ == "__main__":
-    config_file = "./servers/mcp_config_gaia.json"
-    if len(sys.argv) > 1:
-        config_file = sys.argv[1]
+    parser = argparse.ArgumentParser(description="MCP Server Config")
+    parser.add_argument("--name", type=str, required=True, help="Server name IN GAIA, CODING, MATH")
+    args = parser.parse_args()
+    config_file = f"{WORK_DIR}//mcp_configs///{args.name}.json"
     main(config_file)

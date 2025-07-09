@@ -153,7 +153,7 @@ class RulesInductionProgramINFER(dspy.Module):
         self.verbose = verbose
         self.teacher_settings = teacher_settings or {}
 
-    def forward(self, examples_text):
+    def eval(self, examples_text):
         original_temp = dspy.settings.lm.kwargs.get("temperature", 0.7)
         if self.teacher_settings:
             with dspy.settings.context(**self.teacher_settings):

@@ -17,7 +17,7 @@ class AsyncMCPClient:
 
     async def connect_to_sse_server(self, server_url: str):
         """Connect to an MCP server running with SSE transport"""
-        # Store the context managers so they stay alive
+        # Store the context records so they stay alive
 
         os.environ["HTTP_PROXY"] = "http://127.0.0.1:10101"
         os.environ["HTTPS_PROXY"] = "http://127.0.0.1:10101"

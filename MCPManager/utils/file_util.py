@@ -106,20 +106,26 @@ def read_json_file(file_path: str, cls: Type[T]) -> T:
         data = json.load(f)
         return from_dict(cls, data)
 
+def read_json(file_path:str):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+        return data
 
 def dataclass_to_json(obj: Any, indent: int = None) -> str:
     def _serialize(obj):
         if hasattr(obj, '__dataclass_fields__'):
-            return {f.name: _serialize(getattr(obj, f.name)) for f in fields(obj)}
+            return {
+                f.name: _serialize(getattr(obj, f.name))
+                for f in fields(obj)
+                if not f.metadata.get('exclude', False)
+            }
         elif isinstance(obj, list):
             return [_serialize(item) for item in obj]
         elif isinstance(obj, dict):
             return {k: _serialize(v) for k, v in obj.items()}
         else:
             return obj
-
     return json.dumps(_serialize(obj), ensure_ascii=False, indent=indent)
-
 
 def read_jsonl_file(file_path, cls: Type[T]) -> List[T]:
     jsons = []
@@ -134,6 +140,18 @@ def read_jsonl_file(file_path, cls: Type[T]) -> List[T]:
             jsons.append(from_dict(cls, data))
     return jsons
 
+def read_jsonl(file_path:str):
+    jsons = []
+    if not os.path.exists(file_path):
+        return jsons
+    with open(file_path, encoding='utf-8') as json_file:
+        json_list = json_file.readlines()
+        for line in json_list:
+            if not line:
+                continue
+            data = json.loads(line)
+            jsons.append(data)
+    return jsons
 
 def append_jsonl_file(file_path, json_obj):
     with open(file_path, 'a', encoding='utf-8') as f:

@@ -1,7 +1,7 @@
-from benchmark import BenchmarkMeta, MCPBench
-from utils.evaluation_utils import mcp_metric
+from benchmark.benchmark import BenchmarkMeta, MCPBench
+from process.evaluator import Evaluator
 from .math_program import MathPredict
-from ..constants import REACT_PROMPT
+from cons.constants import REACT_PROMPT
 
 SYSTEM_PROMPT = """# Role
 You are a specialized mathematics assistant that MUST use available tools to solve math problems. Your primary responsibility is to provide accurate answers by utilizing appropriate tools rather than attempting to solve problems directly.
@@ -31,13 +31,13 @@ You are a specialized mathematics assistant that MUST use available tools to sol
 Question: What is the determinant of matrix [[4, 7], [2, 6]]?
 [Thought]This question asks for the determinant of a 2x2 matrix. I should use the matrix_calculator tool to compute this[/Thought]
 [Action]```json
-{
+{{
   "server_name": "math_server",
   "tool_name": "calculate",
-  "arguments": {
+  "arguments": {{
     "expression": "det([[4, 7], [2, 6]])"
-  }
-}
+  }}
+}}
 ```[/Action]
 [Observation]10[/Observation]
 [Answer]Based on the tool's calculation, The result is 10[/Answer]
@@ -45,17 +45,15 @@ Question: What is the determinant of matrix [[4, 7], [2, 6]]?
 def get_mcp_sample_benchmark():
     mcp_sample_baseline = MathPredict(
                                 max_steps=5, 
-                                system_prompt=(REACT_PROMPT+SYSTEM_PROMPT).strip(),
+                                prompt_template=(REACT_PROMPT+SYSTEM_PROMPT).strip(),
                                 task_name="math")
     
-    return [
-        BenchmarkMeta(
+    return BenchmarkMeta(
             MCPBench,
             [mcp_sample_baseline],
-            mcp_metric,
+            Evaluator.mcp_metric,
             optimizers=[],
             name="MCP_MATH"
         )
-    ]
 
 benchmark = get_mcp_sample_benchmark()

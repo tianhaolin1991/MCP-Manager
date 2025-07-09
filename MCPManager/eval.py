@@ -8,8 +8,11 @@ import dspy
 
 from analysis import read_evaluation_results
 from benchmark.benchmark import BenchmarkMeta, EvaluateBench, EvaluationResult
-from utils.file_util import read_jsonl_file
+from cons.constants import WORK_DIR
+from cons.llm_config import *
+from process.llm import LLM
 from benchmark.register_benchmark import register_all_benchmarks, registered_benchmarks
+from process.mcp_executor import MCPExecutor
 
 
 class CompareAnswerSignature(dspy.Signature):
@@ -28,7 +31,7 @@ class CompareAnswer(dspy.Module):
     def __init__(self):
         self.compare_answer = dspy.ChainOfThought(CompareAnswerSignature)
 
-    def forward(self, ground_truth, answer):
+    def eval(self, ground_truth, answer):
         pred = self.compare_answer(answer=answer, ground_truth=ground_truth)
         return pred
 
@@ -44,14 +47,14 @@ def llm_as_judge_evaluate(gold, pred, extract_answer_fun=lambda x: x.answer):
         return False
 
 
-#@contextmanager
-#def suppress_output(suppress=True):
+# @contextmanager
+# def suppress_output(suppress=True):
 #    if suppress:
 #        # Save the original streams
 #        original_stderr = sys.stderr
 #        original_stdout = sys.stdout
 
-        # Redirect stderr and stdout to devnull
+# Redirect stderr and stdout to devnull
 #        sys.stderr = open(os.devnull, "w")
 #        sys.stdout = open(os.devnull, "w")
 
@@ -123,15 +126,54 @@ def read_evaluation_records(file_path):
     return records
 
 
+def evaluate_all(
+        benchmarks,
+        lm,
+        mcp_config,
+        file_path,
+        num_threads=8,
+        dataset_mode=None,
+        dataset_path=None,
+        missing_mode=False,
+        api_key=None,
+        api_base=None,
+):
+    # 只有当benchmarks是字符串列表时才进行注册
+    if benchmarks and isinstance(benchmarks[0], str):
+        benchmarks = register_all_benchmarks(benchmarks)
+    if missing_mode:
+        generate_evaluation_records(file_path)
+    for benchmark_meta in benchmarks:
+        evaluate(
+            benchmark_meta,
+            lm,
+            mcp_config,
+            file_path,
+            num_threads,
+            dataset_mode,
+            dataset_path,
+            api_key=api_key,
+            api_base=api_base,
+        )
+
+    df = read_evaluation_results(file_path)
+    df.to_csv(f"{file_path}/evaluation_results.csv", index=False)
+    df["model"] = lm
+
+    # generate evaluation records
+    generate_evaluation_records(file_path)
+
+
 def evaluate(
-    benchmark_meta: BenchmarkMeta,
-    lm,
-    file_path,
-    num_threads=8,
-    dataset_mode=None,
-    dataset_path=None,
-    api_key=None,
-    api_base=None,
+        benchmark_meta: BenchmarkMeta,
+        lm,
+        mcp_config,
+        file_path,
+        num_threads=8,
+        dataset_mode=None,
+        dataset_path=None,
+        api_key=None,
+        api_base=None,
 ):
     """
     benchmark_meta: BenchmarkMeta object to evaluate
@@ -148,7 +190,6 @@ def evaluate(
     print(f"num_threads: {num_threads}")
     print(f"Test set size: {len(benchmark.test_set)}")
 
-
     Path(file_path).mkdir(parents=True, exist_ok=True)
 
     evaluation_records = read_evaluation_records(file_path)
@@ -164,26 +205,24 @@ def evaluate(
 
     for program in benchmark_meta.program:
         program_name = getattr(program, "_name", program.__class__.__name__)
-        setattr(program, "mcp_config", global_config)
         # if missing_mode:
-            # Only run missing experiments
-            # for optimizer in benchmark_meta.optimizers:
-            #     if (benchmark_name, program_name, optimizer.name) in evaluation_records:
-            #         optimizers.remove(optimizer)
-            # if (benchmark_name, program_name, "None") in evaluation_records:
-            #     evaluate_baseline_flag = False
+        # Only run missing experiments
+        # for optimizer in benchmark_meta.optimizers:
+        #     if (benchmark_name, program_name, optimizer.name) in evaluation_records:
+        #         optimizers.remove(optimizer)
+        # if (benchmark_name, program_name, "None") in evaluation_records:
+        #     evaluate_baseline_flag = False
 
         print(f"Program: {program_name}")
 
         evaluate_bench = EvaluateBench(
+            llm=LLM(lm, api_base, api_key),
+            executor = MCPExecutor(mcp_config),
             benchmark=benchmark,
             program=program,
             metric=benchmark_meta.metric,
-            lm=lm,
             benchmark_name=benchmark_meta.name,
-            num_threads=num_threads,
-            api_key=api_key if api_key else os.getenv("OPENAI_API_KEY", ""),
-            api_base=api_base if api_base else os.getenv("OPENAI_API_BASE", ""),
+            num_threads=num_threads
         )
         evaluate_bench.evaluate()
         evaluation_result = evaluate_bench.results
@@ -196,52 +235,9 @@ def evaluate(
             )
 
 
-def evaluate_all(
-    benchmarks,
-    lm,
-    file_path,
-    num_threads=8,
-    suppress_dspy_output=False,
-    dataset_mode=None,
-    dataset_path=None,
-    missing_mode=False,
-    api_key=None,
-    api_base=None,
-):
-    # 只有当benchmarks是字符串列表时才进行注册
-    if benchmarks and isinstance(benchmarks[0], str):
-        benchmarks = register_all_benchmarks(benchmarks)
-    if missing_mode:
-        generate_evaluation_records(file_path)
-    for benchmark_meta in benchmarks:
-        evaluate(
-            benchmark_meta,
-            lm,
-            file_path,
-            num_threads,
-            dataset_mode,
-            dataset_path,
-            api_key=api_key,
-            api_base=api_base,
-        )
-
-    df = read_evaluation_results(file_path)
-    df.to_csv(f"{file_path}/evaluation_results.csv", index=False)
-    df["model"] = lm
-
-    # generate evaluation records
-    generate_evaluation_records(file_path)
-
-global_config=None
 def main():
-    
     parser = argparse.ArgumentParser(description="MCPRadar benchmark evaluation")
     parser.add_argument("--benchmark", type=str, required=True, help="Benchmark to evaluate")
-    parser.add_argument("--lm", type=str, required=True, help="Language model to use")
-    parser.add_argument("--lm_api_key", type=str, help="API key for language model")
-    parser.add_argument(
-        "--lm_api_base", type=str, help="API base for language model"
-    )
     parser.add_argument(
         "--dataset_mode", type=str, help="Dataset mode (train, val, test)"
     )
@@ -249,10 +245,7 @@ def main():
         "--dataset_path", type=str, help="Dataset path"
     )
     parser.add_argument(
-        "--num_threads", type=int, default=8, help="Number of threads to use"
-    )
-    parser.add_argument(
-        "--file_path", type=str, default="evaluation", help="File path for evaluation results"
+        "--output_dir", type=str, default="evaluation", help="File path for evaluation results"
     )
     parser.add_argument(
         "--suppress_dspy_output",
@@ -264,21 +257,14 @@ def main():
         action="store_true",
         help="Only run missing experiments (skip experiments that already have results)",
     )
-    parser.add_argument(
-        "--config",
-        type=str,
-        default='ddgo.json',
-        help="Configuration file for the benchmark",
-    )
-    
+
     args = parser.parse_args()
 
-    global_config= read_json(args.config)
     # 处理benchmark参数
     benchmark_path = args.benchmark
     if not benchmark_path.startswith(""):
         benchmark_path = f"{benchmark_path}"
-    
+
     # 注册所有基准测试
     register_all_benchmarks([benchmark_path])
 
@@ -289,16 +275,20 @@ def main():
 
     evaluate_all(
         benchmarks,
-        args.lm,
-        args.file_path,
-        num_threads=args.num_threads,
-        suppress_dspy_output=args.suppress_dspy_output,
+        MODEL_NAME,
+        f"{WORK_DIR}//mcp_configs/{args.benchmark}.json",
+        args.output_dir,
+        num_threads=1,
         dataset_mode=args.dataset_mode,
         dataset_path=args.dataset_path,
         missing_mode=args.missing_mode,
-        api_key=args.lm_api_key,
-        api_base=args.lm_api_base,
+        api_key=MODEL_API_KEY,
+        api_base=MODEL_BASE_URL,
     )
 
+
 if __name__ == "__main__":
+    """
+--benchmark=GAIA --dataset_mode=full --dataset_path=./MCPRadar/GAIA/data/gaia_dev_part.jsonl --output_dir=evaluation_gaia
+"""
     main()
