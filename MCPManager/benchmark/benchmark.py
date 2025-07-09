@@ -6,6 +6,7 @@ from typing import Callable, List, Type
 import dspy
 
 from benchmark.optimizers import OptimizerConfig, DEFAULT_OPTIMIZERS
+from cons.log import LOGGER
 from mcp_program import MCPPredict
 from process.llm import LLMCallRecord, LLM
 from cons.constants import *
@@ -255,7 +256,7 @@ class EvaluateBench(ABC):
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(results, f, ensure_ascii=False, indent=2)
 
-        print(f"Saved {len(results)} predictions to {output_path}")
+        LOGGER.info(f"Saved {len(results)} predictions to {output_path}")
         return results
 
     def calculate_stats(self, record: List[LLMCallRecord]) -> tuple[float, float, float]:

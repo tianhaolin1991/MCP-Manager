@@ -81,6 +81,8 @@ class MCPPredict(MCPProgram):
         if self.system_prompt is None:
             self._build_system_content()
         messages = LLM.build_init_messages(self.system_prompt, question)
+        LOGGER.debug(self.system_prompt)
+        LOGGER.info(f"Question:\n{question}")
         steps = 0
         all_completion_tokens = 0
         all_prompt_tokens = 0
@@ -104,13 +106,17 @@ class MCPPredict(MCPProgram):
             for message, tag in message_tuples:
                 if tag == Tag.THOUGHT:
                     messages.append(message)
+                    LOGGER.info(message[CONTENT])
                 if tag == Tag.ACTION:
                     messages.append(message)
+                    LOGGER.info(message[CONTENT])
                     observation = self.executor.call(message[CONTENT], LOGGER)
+                    LOGGER.info(observation)
                     messages.append({ROLE: Role.USER, CONTENT: observation})
                     steps += 1
                 if tag == Tag.ANSWER:
                     messages.append(message)
+                    LOGGER.info(message[CONTENT])
                     break
 
         end_time = time.time()

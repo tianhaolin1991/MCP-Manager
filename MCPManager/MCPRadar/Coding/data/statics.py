@@ -33,7 +33,6 @@ def process_jsonl(file_path):
             if not line:
                 continue  # 跳过空行
             # 调试信息：确认正在处理哪一行
-            print(f"处理第 {line_number} 行")
 
             try:
                 data = json.loads(line)

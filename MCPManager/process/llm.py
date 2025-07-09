@@ -39,7 +39,7 @@ class LLM:
                 stop=stop_word
             )
             response_text = response.choices[0].message.content
-            print(f"LLM Response:\n{response_text.replace("\\n", "\n")}")
+            LOGGER.debug(f"LLM Response:\n{response_text.replace("\\n", "\n")}")
             completion_tokens = response.usage.completion_tokens
             prompt_tokens = response.usage.prompt_tokens
             record.lm_usages.append({

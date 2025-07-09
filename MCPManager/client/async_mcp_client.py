@@ -1,7 +1,8 @@
+import copy
 import os
 from contextlib import AsyncExitStack
 from datetime import timedelta
-from typing import Dict, List, Any
+from typing import Any
 
 from mcp import ClientSession, StdioServerParameters
 from mcp.client.sse import sse_client
@@ -15,6 +16,7 @@ class AsyncMCPClient:
         self.name = "mcp"  # Keep name for backward compatibility
         self.exit_stack:AsyncExitStack = AsyncExitStack()
         self.session = None
+        self.id = None
 
     async def execute(self, name: str, arguments: dict[str, Any] | None = None, ) -> str:
         try:
@@ -38,8 +40,9 @@ class AsyncMCPClient:
         self.session = await self.exit_stack.enter_async_context(ClientSession(*streams))
         await self._initialize()
 
-    async def connect_stdio(self, params: StdioServerParameters) -> None:
+    async def connect_stdio(self, org_params: StdioServerParameters) -> None:
         """Connect to an MCP server using stdio transport."""
+        params = copy.deepcopy(org_params)
         self.id = params.command
         args = ['/C', f"{params.args or ''} {params.command}"]
         params.args =  args
@@ -47,7 +50,7 @@ class AsyncMCPClient:
         env_copy = os.environ.copy()
         for key, value in params.env.items():
             env_copy[key] = value
-        print(f"command: {self.id}, env: {params.env}")
+        LOGGER.info(f"command: {self.id}, env: {params.env}")
         params.env = env_copy
         stdio_transport = await self.exit_stack.enter_async_context(stdio_client(params))
         read, write = stdio_transport

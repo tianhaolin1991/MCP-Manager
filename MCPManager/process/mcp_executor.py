@@ -44,15 +44,13 @@ class MCPExecutor:
                     mcp_tool = MCPTool(server.name, name=tool.name, description=tool.description,
                                        input_schema=tool.inputSchema)
                     server.tools.append(mcp_tool)
-                self.mcp_pool.servers.append(server)
+                self.mcp_pool.add_servers([server])
                 if use_cache:
                     append_jsonl_file(self.cache_file, server)
                 server_cnt += 1
                 total_tool_cnt += len(list_res.tools)
             LOGGER.info(f"MCP_EXECUTOR: {server.name} connected, tools-{len(server.tools)}")
-            print(f"MCP_EXECUTOR: {server.name} connected, tools-{len(server.tools)}")
         LOGGER.info(f"MCP_EXECUTOR: INIT_FINISHED {server_cnt} servers connected, tools-{total_tool_cnt}")
-        print(f"MCP_EXECUTOR: INIT_FINISHED {server_cnt} servers connected, tools-{total_tool_cnt}")
 
     @staticmethod
     def extract(content:str):
@@ -75,9 +73,9 @@ class MCPExecutor:
         server = self.mcp_pool.get_server(tool_desc['server'])
         mcp_cli = server.client
         tool_name = tool_desc['name']
-        print(f"Execute Tool\nServer:{server.name}\nTool:{tool_name}\nArgs:{tool_desc['arguments']}")
+        logger.debug(f"Execute Tool\nServer:{server.name}\nTool:{tool_name}\nArgs:{tool_desc['arguments']}")
         result = mcp_cli.call_tool(tool_name, tool_desc['arguments'])
-        logger.info(f"Execute Tool: {server.name}-{tool_name}, results:{result}")
+        logger.debug(f"Execute Tool: {server.name}-{tool_name}, results:{result}")
         return f'{Tag.OBSERVATION.start}{result[0:self.max_token]}{Tag.OBSERVATION.close}'
 
 

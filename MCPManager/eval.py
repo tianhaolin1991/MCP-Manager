@@ -10,6 +10,7 @@ from analysis import read_evaluation_results
 from benchmark.benchmark import BenchmarkMeta, EvaluateBench, EvaluationResult
 from cons.constants import WORK_DIR
 from cons.llm_config import *
+from cons.log import LOGGER
 from process.llm import LLM
 from benchmark.register_benchmark import register_all_benchmarks, registered_benchmarks
 from process.mcp_executor import MCPExecutor
@@ -186,9 +187,9 @@ def evaluate(
     benchmark_name = benchmark_meta.name or benchmark.__class__.__name__
 
     num_threads = benchmark_meta.num_threads or num_threads
-    print(f"Evaluating {benchmark_name}")
-    print(f"num_threads: {num_threads}")
-    print(f"Test set size: {len(benchmark.test_set)}")
+    LOGGER.info(f"Evaluating {benchmark_name}")
+    LOGGER.info(f"num_threads: {num_threads}")
+    LOGGER.info(f"Test set size: {len(benchmark.test_set)}")
 
     Path(file_path).mkdir(parents=True, exist_ok=True)
 
@@ -213,7 +214,7 @@ def evaluate(
         # if (benchmark_name, program_name, "None") in evaluation_records:
         #     evaluate_baseline_flag = False
 
-        print(f"Program: {program_name}")
+        LOGGER.info(f"Program: {program_name}")
 
         evaluate_bench = EvaluateBench(
             llm=LLM(lm, api_base, api_key),

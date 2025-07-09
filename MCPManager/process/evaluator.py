@@ -30,10 +30,13 @@ class Evaluator:
                 CONTENT: prompt
             }
         ]
-        logger.info(f"开始评测final answer")
-        logger.info(f"question: {question}")
-        logger.info(f"ground_truth: {ground_truth}")
-        logger.info(f"prediction: {prediction}")
+        logger.info(f"""[EVALUATE]
+{{
+    question: {question},
+    ground truth: {ground_truth},
+    prediction: {prediction}
+}}
+[/EVALUATE]""")
 
         # Create a temporary manager for the judge model
         judge_record = LLMCallRecord(
@@ -59,7 +62,6 @@ class Evaluator:
             logger: logging.Logger
     ) -> bool:
         # Use LM for evaluation
-        logger.info("Using LM for final answer evaluation.")
         is_correct = Evaluator.evaluate_final_answer(llm, question, ground_truth, model_answer, record, logger)  # Use model_answer as prediction
         return is_correct  # Return the boolean result
 
