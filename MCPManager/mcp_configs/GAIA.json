@@ -9,7 +9,7 @@
                     "env": {
                         "FIRECRAWL_API_KEY": "fc-7fe7a922665746b89e644b32a46d3040"
                     },
-                    "args": "",
+                    "args": [],
                     "port": 8005
                 }
             ]

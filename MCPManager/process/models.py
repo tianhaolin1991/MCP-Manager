@@ -3,7 +3,7 @@ from dataclasses import field, dataclass
 from typing import List, Dict, Optional
 
 from cons.constants import Role
-from utils.synced_mcp_client import SyncedMcpClient
+from client.synced_mcp_client import SyncedMcpClient
 
 
 @dataclass
@@ -37,6 +37,8 @@ class ServerConfig:
 class RunConfig:
     command: str
     port: int
+    args: List[str] = field(default_factory=list)
+    env: Dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -53,7 +55,7 @@ class MCPPool:
                 tool.server = server.name
                 self.nested_dict[server.name][tool.name] = tool
 
-    def add_servers(self, servers:[]):
+    def add_servers(self, servers: []):
         for server in servers:
             self.servers.append(server)
             self.server_dict[server.name] = server

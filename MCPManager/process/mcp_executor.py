@@ -1,20 +1,22 @@
 import logging
 import os
 
+from mcp import StdioServerParameters
 from tenacity import retry, stop_after_attempt, wait_exponential
 from cons.constants import *
 from cons.log import LOGGER
 from process.models import *
 from utils.file_util import read_json_file, read_jsonl_file, append_jsonl_file
-from utils.synced_mcp_client import SyncedMcpClient
+from client.synced_mcp_client import SyncedMcpClient
 
 
 class MCPExecutor:
-    def __init__(self, config_file: str, max_token=5000, use_cache=True, cache_dir=f"{WORK_DIR}//cache"):
+    def __init__(self, config_file: str, max_token=5000, use_cache=True, cache_dir=f"{WORK_DIR}//cache", mode="stdio"):
         mcp_config = read_json_file(config_file, MCPConfig)
         self.mcp_pool = MCPPool()
         self.max_token = max_token
         self.cache_file = f'{cache_dir}//mcp_servers.jsonl'
+        self.mode = mode
         server_cnt = 0
         total_tool_cnt = 0
         if use_cache:
@@ -22,8 +24,12 @@ class MCPExecutor:
             servers = read_jsonl_file(self.cache_file, MCPServer)
             self.mcp_pool.add_servers(servers)
         for config in mcp_config.mcp_pool:
-            url = f"http://localhost:{config.run_config[0].port}/sse"
-            client = SyncedMcpClient(server_url=url)
+            run_config = config.run_config[0]
+            if self.mode == "stdio" :
+                client = SyncedMcpClient(params=StdioServerParameters(command=run_config.command, args=run_config.args, env=run_config.env))
+            else:
+                url = f"http://localhost:{run_config.port}/sse"
+                client = SyncedMcpClient(params=url)
             server = MCPServer(name=config.name, description=config.description if config.description else "",
                                client=client)
             cached_server = self.mcp_pool.get_server(server.name)
@@ -71,25 +77,12 @@ class MCPExecutor:
         tool_name = tool_desc['name']
         print(f"Execute Tool\nServer:{server.name}\nTool:{tool_name}\nArgs:{tool_desc['arguments']}")
         result = mcp_cli.call_tool(tool_name, tool_desc['arguments'])
-        texts = [item.text for item in result.content]
-        result_str_segment = ''.join(texts)
-        logger.info(f"Execute Tool: {server.name}-{tool_name}, results:{result_str_segment}")
-        return f'{Tag.OBSERVATION.start}{result_str_segment[0:self.max_token]}{Tag.OBSERVATION.close}'
+        logger.info(f"Execute Tool: {server.name}-{tool_name}, results:{result}")
+        return f'{Tag.OBSERVATION.start}{result[0:self.max_token]}{Tag.OBSERVATION.close}'
 
 
 if __name__ == '__main__':
     executor = MCPExecutor(config_file=f"{WORK_DIR}//mcp_configs//GAIA.json")
-    #   response = executor.call("""```json
-    #    {
-    #      "server": "Fetch",
-    #      "name": "fetch",
-    #      "arguments": {
-    #        "url": "https://www.baidu.com"
-    #     }
-    #    }
-    #    ```""", LOGGER)
-    #    print(response)
-
     response = executor.call("""```json
     {
     "server": "DuckDuckGo Search Server",
