@@ -67,23 +67,35 @@ class MCPExecutor:
             logger.error(f"NO TOOLS FOUND FROM, {content}")
             return ""
         server = self.mcp_pool.get_server(tool_desc['server'])
-        tool = self.mcp_pool.get_tool(tool_desc['server'], tool_desc['name'])
-        result = server.client.call_tool(tool.name, tool_desc['arguments'])
+        tool_name = tool_desc['name']
+        print(f"Execute Tool\nServer:{server.name}\nTool:{tool_name}\nArgs:{tool_desc['arguments']}")
+        result = server.client.call_tool(tool_name, tool_desc['arguments'])
         texts = [item.text for item in result.content]
         result_str_segment = ''.join(texts)
-        logger.info(f"Execute Tool: {server.name}-{tool.name}, results:{result_str_segment}")
+        logger.info(f"Execute Tool: {server.name}-{tool_name}, results:{result_str_segment}")
         return f'{Tag.OBSERVATION}{result_str_segment[0:self.max_token]}{Tag.OBSERVATION.close}'
 
 
 if __name__ == '__main__':
     executor = MCPExecutor(config_file=f"{WORK_DIR}//mcp_configs//GAIA.json")
+    #   response = executor.call("""```json
+    #    {
+    #      "server": "Fetch",
+    #      "name": "fetch",
+    #      "arguments": {
+    #        "url": "https://www.baidu.com"
+    #     }
+    #    }
+    #    ```""", LOGGER)
+    #    print(response)
+
     response = executor.call("""```json
-{ 
-  "server": "Fetch",
-  "name": "fetch",
-  "arguments": {
-    "url": "https://www.baidu.com"
- }
-}
-```""",LOGGER)
+    { 
+      "server": "DuckDuckGo Search Server",
+      "name": "search",
+      "arguments": {
+        "query": "Hot News"
+     }
+    }
+    ```""", LOGGER)
     print(response)

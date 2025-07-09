@@ -1,8 +1,6 @@
 import json
-from dataclasses import field, dataclass, asdict
+from dataclasses import field, dataclass
 from typing import List, Dict, Optional
-
-from dataclasses_json import dataclass_json, config
 
 from cons.constants import Role
 from utils.synced_mcp_client import SyncedMcpClient

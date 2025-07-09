@@ -88,12 +88,20 @@ class MCPPredict(MCPProgram):
 
         while not messages[-1][ROLE] == Role.ASSISTANT and steps < self.max_steps:
             messages.append(STEP_MESSAGE)
+            """
+               The LLM may generates [Observation] itself,
+               I.e., it may generate
+               [Thought] ... [Thought]
+               [Action] ... [/Action]
+               [Observation] ... [Observation],
+               so we truncate it with `stop` words.
+            """
             response, completion_tokens, prompt_tokens = self.llm.call(messages, record, stop_word=Tag.OBSERVATION.value, logger=LOGGER)
-            message_tuple = ReactParser.parse(response)
+            message_tuples = ReactParser.parse(response)
             all_completion_tokens += completion_tokens
             all_prompt_tokens += prompt_tokens
             messages.pop()
-            for message, tag in message_tuple:
+            for message, tag in message_tuples:
                 if tag == Tag.THOUGHT:
                     messages.append(message)
                 if tag == Tag.ACTION:
