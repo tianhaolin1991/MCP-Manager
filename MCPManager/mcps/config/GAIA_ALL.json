@@ -1,0 +1,57 @@
+{
+    "mcp_pool": [
+        {
+            "name": "Fetch",
+            "description": "A Model Context Protocol server that provides web content fetching capabilities. This server enables LLMs to retrieve and process content from web pages, converting HTML to markdown for easier consumption.The fetch tool will truncate the response, but by using the start_index argument, you can specify where to start the content extraction. This lets models read a webpage in chunks, until they find the information they need.",
+            "run_config": [
+                {
+                    "command": "uvx mcp-server-fetch",
+                    "url": "http://localhost:8007/sse",
+                    "mode": "stdio"
+                }
+            ]
+        },
+        {
+            "name": "DuckDuckGo Search Server",
+            "description": "Enable web search capabilities through DuckDuckGo. Fetch and parse webpage content intelligently for enhanced LLM interaction",
+            "run_config": [
+                {
+                    "command": "uvx duckduckgo-mcp-server",
+                    "url": "http://localhost:8006/sse",
+                    "mode": "stdio"
+                }
+            ]
+        },
+        {
+            "name": "Desktop Commander",
+            "description": "Execute terminal commands and manage files with diff editing capabilities. Coding, shell and terminal, task automation",
+            "run_config": [
+                {
+                    "command": "npx -y @wonderwhy-er/desktop-commander",
+                    "url": "http://localhost:8008/sse",
+                    "mode": "stdio"
+                }
+            ]
+        },
+        {
+            "name": "Google Maps",
+            "description": "Provides location-based services and mapping functionality through the Google Maps Platform APIs",
+            "run_config": [
+                {
+                    "url": "https://mcp.amap.com/sse?key=85201fe2df04d100f944b5e6cfcb619f",
+                    "mode": "sse"
+                }
+            ]
+        },
+        {
+            "name": "ALiven",
+            "description": "Enable AI agents to get structured data from unstructured web with AgentQL.",
+            "run_config": [
+                {
+                    "command": "python [WORK_DIR]//mcps//mock//aliven.py",
+                    "mode": "stdio"
+                }
+            ]
+        }
+    ]
+}

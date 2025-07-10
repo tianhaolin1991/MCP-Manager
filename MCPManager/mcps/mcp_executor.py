@@ -25,7 +25,7 @@ class MCPExecutor:
         for config in mcp_config.mcp_pool:
             run_config = config.run_config[0]
             if run_config.mode == "stdio" :
-                command = run_config.command.replace("[WORK_DIR]", f"{WORK_DIR}//mcps//local")
+                command = run_config.command.replace("[WORK_DIR]", f"{WORK_DIR}")
                 client = SyncedMcpClient(params=StdioServerParameters(command=command, args=run_config.args, env=run_config.env))
             else:
                 url = run_config.url
@@ -80,14 +80,11 @@ class MCPExecutor:
 
 
 if __name__ == '__main__':
-    executor = MCPExecutor(config_file=f"{WORK_DIR}//mcps//config//GAIA.json")
+    executor = MCPExecutor(config_file=f"{WORK_DIR}//mcps//config//GAIA_ALL.json")
     response = executor.call("""```json
 {
-    "server": "FireCrawl",
-    "name": "firecrawl_scrape",
-    "arguments": {
-        "url": "https://www.nature.com/nature/articles?year=2020"
-    }
+    "server": "Aliven",
+    "name": "list_projects"
 }
 ```""", LOGGER)
     print(response)
