@@ -10,7 +10,8 @@
                         "FIRECRAWL_API_KEY": "fc-7fe7a922665746b89e644b32a46d3040"
                     },
                     "args": [],
-                    "port": 8005
+                    "port": 8005,
+                    "mode": "stdio"
                 }
             ]
         },
@@ -20,7 +21,8 @@
             "run_config": [
                 {
                     "command": "uvx duckduckgo-mcp-server",
-                    "port": 8006
+                    "port": 8006,
+                    "mode": "stdio"
                 }
             ]
         },
@@ -30,7 +32,8 @@
             "run_config": [
                 {
                     "command": "uvx mcp-server-fetch",
-                    "port": 8007
+                    "port": 8007,
+                    "mode": "stdio"
                 }
             ]
         },
@@ -40,7 +43,8 @@
             "run_config": [
                 {
                     "command": "npx -y @wonderwhy-er/desktop-commander",
-                    "port": 8008
+                    "port": 8008,
+                    "mode": "stdio"
                 }
             ]
         }
