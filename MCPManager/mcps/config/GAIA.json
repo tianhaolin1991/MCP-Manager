@@ -17,7 +17,8 @@
             "run_config": [
                 {
                     "command": "uvx duckduckgo-mcp-server",
-                    "port": 8006
+                    "url": "http://localhost:8006/sse",
+                    "mode": "stdio"
                 }
             ]
         },
