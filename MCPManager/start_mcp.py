@@ -226,7 +226,8 @@ def main(config_file, mode="stdio"):
 
     for server in mcp_pool:
         if mode == "stdio":
-            server_processes.append(run_stdio(server))
+            pass
+            #server_processes.append(run_stdio(server))
         else:
             server_processes.append(run_sse(server))
     if server_processes:

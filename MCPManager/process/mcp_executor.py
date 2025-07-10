@@ -16,7 +16,6 @@ class MCPExecutor:
         self.mcp_pool = MCPPool()
         self.max_token = max_token
         self.cache_file = f'{cache_dir}//mcp_servers.jsonl'
-        self.mode = mode
         server_cnt = 0
         total_tool_cnt = 0
         if use_cache:
@@ -25,7 +24,7 @@ class MCPExecutor:
             self.mcp_pool.add_servers(servers)
         for config in mcp_config.mcp_pool:
             run_config = config.run_config[0]
-            if self.mode == "stdio" :
+            if run_config.mode == "stdio" :
                 client = SyncedMcpClient(params=StdioServerParameters(command=run_config.command, args=run_config.args, env=run_config.env))
             else:
                 url = f"http://localhost:{run_config.port}/sse"

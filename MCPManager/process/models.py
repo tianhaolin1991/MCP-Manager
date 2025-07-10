@@ -37,6 +37,7 @@ class ServerConfig:
 class RunConfig:
     command: str
     port: int
+    mode: str
     args: List[str] = field(default_factory=list)
     env: Dict[str, str] = field(default_factory=dict)
 
