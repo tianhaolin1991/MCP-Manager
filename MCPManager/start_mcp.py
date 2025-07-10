@@ -257,5 +257,5 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="MCP Server Config")
     parser.add_argument("--name", type=str, required=True, help="Server name IN GAIA, CODING, MATH")
     args = parser.parse_args()
-    config_file = f"{WORK_DIR}//mcp_configs///{args.name}.json"
+    config_file = f"{WORK_DIR}//mcps//config///{args.name}.json"
     main(config_file)

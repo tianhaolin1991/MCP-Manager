@@ -11,7 +11,7 @@ from client.synced_mcp_client import SyncedMcpClient
 
 
 class MCPExecutor:
-    def __init__(self, config_file: str, max_token=5000, use_cache=True, cache_dir=f"{WORK_DIR}//cache", mode="stdio"):
+    def __init__(self, config_file: str, max_token=5000, use_cache=True, cache_dir=f"{WORK_DIR}//mcps//cache"):
         mcp_config = read_json_file(config_file, MCPConfig)
         self.mcp_pool = MCPPool()
         self.max_token = max_token
@@ -25,9 +25,10 @@ class MCPExecutor:
         for config in mcp_config.mcp_pool:
             run_config = config.run_config[0]
             if run_config.mode == "stdio" :
-                client = SyncedMcpClient(params=StdioServerParameters(command=run_config.command, args=run_config.args, env=run_config.env))
+                command = run_config.command.replace("[WORK_DIR]", f"{WORK_DIR}//mcps//local")
+                client = SyncedMcpClient(params=StdioServerParameters(command=command, args=run_config.args, env=run_config.env))
             else:
-                url = f"http://localhost:{run_config.port}/sse"
+                url = run_config.url
                 client = SyncedMcpClient(params=url)
             server = MCPServer(name=config.name, description=config.description if config.description else "",
                                client=client)
@@ -79,15 +80,14 @@ class MCPExecutor:
 
 
 if __name__ == '__main__':
-    executor = MCPExecutor(config_file=f"{WORK_DIR}//mcp_configs//GAIA.json")
+    executor = MCPExecutor(config_file=f"{WORK_DIR}//mcps//config//GAIA.json")
     response = executor.call("""```json
-    {
-    "server": "DuckDuckGo Search Server",
-    "name": "search",
+{
+    "server": "FireCrawl",
+    "name": "firecrawl_scrape",
     "arguments": {
-        "query": "USGS nonnative clownfish sightings before 2020 zip codes",
-        "max_results": 5
+        "url": "https://www.nature.com/nature/articles?year=2020"
     }
 }
-    ```""", LOGGER)
+```""", LOGGER)
     print(response)

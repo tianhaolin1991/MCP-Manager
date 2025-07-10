@@ -13,7 +13,7 @@ from cons.llm_config import *
 from cons.log import LOGGER
 from process.llm import LLM
 from benchmark.register_benchmark import register_all_benchmarks, registered_benchmarks
-from process.mcp_executor import MCPExecutor
+from mcps.mcp_executor import MCPExecutor
 
 
 class CompareAnswerSignature(dspy.Signature):
@@ -277,7 +277,7 @@ def main():
     evaluate_all(
         benchmarks,
         MODEL_NAME,
-        f"{WORK_DIR}//mcp_configs/{args.benchmark}.json",
+        f"{WORK_DIR}//mcps//config/{args.benchmark}.json",
         args.output_dir,
         num_threads=1,
         dataset_mode=args.dataset_mode,

@@ -6,7 +6,7 @@ import time
 
 from cons.log import LOGGER
 from process.llm import LLM
-from process.mcp_executor import MCPExecutor
+from mcps.mcp_executor import MCPExecutor
 from process.models import LLMCallRecord
 from process.evaluator import Evaluator
 from cons.constants import *

@@ -1,7 +1,7 @@
 import re
 from enum import Enum
 
-WORK_DIR = "D:\\PYTHON\\MCP-Manager\\MCPManager"
+WORK_DIR = "D://PYTHON//MCP-Manager//MCPManager"
 
 ROLE = 'role'
 CONTENT = 'content'

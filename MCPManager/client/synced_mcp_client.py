@@ -1,12 +1,11 @@
 import asyncio
 import atexit
 import threading
-from typing import Any, Dict, Optional
+from typing import Any, Dict
 
 from mcp import StdioServerParameters
 
 from client.async_mcp_client import AsyncMCPClient
-
 
 class SyncedMcpClient:
     def __init__(self, params: str | StdioServerParameters = None):

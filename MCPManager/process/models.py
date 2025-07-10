@@ -35,9 +35,9 @@ class ServerConfig:
 
 @dataclass
 class RunConfig:
-    command: str
-    port: int
-    mode: str
+    command: str = field(default="")
+    url: str = field(default="")
+    mode: str = field(default="stdio")
     args: List[str] = field(default_factory=list)
     env: Dict[str, str] = field(default_factory=dict)
 

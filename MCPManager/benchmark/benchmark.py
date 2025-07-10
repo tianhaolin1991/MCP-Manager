@@ -10,7 +10,7 @@ from cons.log import LOGGER
 from mcp_program import MCPPredict
 from process.llm import LLMCallRecord, LLM
 from cons.constants import *
-from process.mcp_executor import MCPExecutor
+from mcps.mcp_executor import MCPExecutor
 from utils.file_util import read_jsonl
 
 dataset_size = {"full": None, "lite": 500, "tiny": 200, "test": 2}
