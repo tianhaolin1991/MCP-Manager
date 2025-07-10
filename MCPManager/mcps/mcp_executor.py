@@ -69,7 +69,7 @@ class MCPExecutor:
         tool_desc = MCPExecutor.extract(content)
         if not tool_desc:
             logger.error(f"NO TOOLS FOUND FROM, {content}")
-            return ""
+            return f"NO TOOLS FOUND FROM YOUR ACTION: {content}"
         server = self.mcp_pool.get_server(tool_desc['server'])
         mcp_cli = server.client
         tool_name = tool_desc['name']
